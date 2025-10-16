@@ -91,7 +91,7 @@ export default function WeddingCountdown() {
   ), []); // Empty dependency array - only renders once
 
   return (
-    <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
       {/* Background Color */}
       <div className="absolute inset-0 bg-[#d87558]" />
       
@@ -109,14 +109,14 @@ export default function WeddingCountdown() {
 
 
       {/* Main content */}
-      <div className="flex flex-col items-center gap-6 z-10">
+      <div className="flex flex-col items-center gap-4 sm:gap-6 z-10 w-full max-w-4xl">
         {/* Date header */}
         <div className="flex flex-col items-center gap-2 relative">
-          <h2 className="text-[#c91b21] text-5xl font-serif font-normal">
+          <h2 className="text-[#c91b21] text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-center">
             October 22
           </h2>
           {/* Overlapping Circular Elements - Replacing Group 4 */}
-          <div className="absolute -top-20 -right-48 w-32 h-32">
+          <div className="absolute -top-12 -right-24 sm:-top-20 sm:-right-48 w-20 h-20 sm:w-32 sm:h-32 hidden sm:block">
             {/* Circular Outer - Rotating */}
             <Image 
               src="/Circular Outer.png" 
@@ -135,22 +135,22 @@ export default function WeddingCountdown() {
               className="absolute inset-0 w-full h-full"
             />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-[#c91b21] rounded-full" />
-            <span className="text-[#c91b21] text-2xl font-serif">2025</span>
-            <div className="w-2 h-2 bg-[#c91b21] rounded-full" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#c91b21] rounded-full" />
+            <span className="text-[#c91b21] text-xl sm:text-2xl font-serif">2025</span>
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#c91b21] rounded-full" />
           </div>
         </div>
 
         {/* Names */}
-        <div className="text-center">
-          <h1 className="text-[#c91b21] text-8xl font-serif font-normal">
-            Afifa <span className="text-6xl">&</span> Rehan
+        <div className="text-center px-4">
+          <h1 className="text-[#c91b21] text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal leading-tight">
+            Afifa <span className="text-3xl sm:text-5xl md:text-6xl lg:text-6xl">&</span> Rehan
           </h1>
         </div>
 
         {/* Countdown */}
-        <div className="flex gap-4">
+        <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-4 w-full sm:w-auto justify-center">
           {[
             { value: timeLeft.days, label: 'DAYS' },
             { value: timeLeft.hours, label: 'HOURS' },
@@ -160,12 +160,12 @@ export default function WeddingCountdown() {
             <div 
               key={index}
               ref={(el) => { countdownBoxesRef.current[index] = el; }}
-              className="flex flex-col items-center justify-center w-20 h-24 px-4 py-3 border border-[#ffbcab]/30 text-[#ffbcab]"
+              className="flex flex-col items-center justify-center w-full sm:w-20 h-16 sm:h-24 px-2 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
             >
-              <span className="text-4xl font-serif">
+              <span className="text-2xl sm:text-4xl font-serif leading-none">
                 {item.value.toString().padStart(2, '0')}
               </span>
-              <span className="text-xs font-mono font-normal tracking-wider">
+              <span className="text-xs font-mono font-normal tracking-wider mt-1">
                 {item.label}
               </span>
             </div>
