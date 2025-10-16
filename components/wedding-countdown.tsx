@@ -107,7 +107,6 @@ export default function WeddingCountdown() {
       {/* Fireworks Background - Memoized to prevent restart */}
       {memoizedFireworks}
 
-
       {/* Main content */}
       <div className="flex flex-col items-center gap-4 sm:gap-6 z-10 w-full max-w-4xl">
         {/* Date header */}
@@ -116,13 +115,13 @@ export default function WeddingCountdown() {
             October 22
           </h2>
           {/* Overlapping Circular Elements - Replacing Group 4 */}
-          <div className="absolute -top-12 -right-24 sm:-top-20 sm:-right-48 w-20 h-20 sm:w-32 sm:h-32 hidden sm:block">
+          <div className="absolute -top-8 -right-40 sm:-top-12 sm:-right-64 w-36 h-36 sm:w-40 sm:h-40">
             {/* Circular Outer - Rotating */}
             <Image 
               src="/Circular Outer.png" 
               alt="Circular outer rotating element" 
-              width={128}
-              height={128}
+              width={160}
+              height={160}
               className="absolute inset-0 w-full h-full animate-spin origin-center"
               style={{ animation: 'spin 15s linear infinite' }}
             />
@@ -130,8 +129,8 @@ export default function WeddingCountdown() {
             <Image 
               src="/Circular Inner.png" 
               alt="Circular inner static element" 
-              width={128}
-              height={128}
+              width={160}
+              height={160}
               className="absolute inset-0 w-full h-full"
             />
           </div>
@@ -143,14 +142,14 @@ export default function WeddingCountdown() {
         </div>
 
         {/* Names */}
-        <div className="text-center px-4">
-          <h1 className="text-[#c91b21] text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal leading-tight">
-            Afifa <span className="text-3xl sm:text-5xl md:text-6xl lg:text-6xl">&</span> Rehan
+        <div className="text-center px-4 w-[90%] sm:w-auto">
+          <h1 className="text-[#c91b21] text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-normal leading-tight">
+            Afifa <span className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl">weds</span> Rehan
           </h1>
         </div>
 
         {/* Countdown */}
-        <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-4 w-full sm:w-auto justify-center">
+        <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center">
           {[
             { value: timeLeft.days, label: 'DAYS' },
             { value: timeLeft.hours, label: 'HOURS' },
@@ -160,7 +159,7 @@ export default function WeddingCountdown() {
             <div 
               key={index}
               ref={(el) => { countdownBoxesRef.current[index] = el; }}
-              className="flex flex-col items-center justify-center w-full sm:w-20 h-16 sm:h-24 px-2 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
+              className="flex flex-col items-center justify-center flex-1 sm:w-20 h-16 sm:h-24 px-1 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
             >
               <span className="text-2xl sm:text-4xl font-serif leading-none">
                 {item.value.toString().padStart(2, '0')}
