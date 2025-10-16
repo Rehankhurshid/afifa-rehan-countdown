@@ -1,12 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import { gsap } from 'gsap';
-import LightRays from './LightRays';
-import Aurora from './Aurora';
-import Dither from './Dither';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
-import BlurText from './text/blur-text';
 
 interface TimeLeft {
   days: number;
@@ -84,40 +81,6 @@ export default function WeddingCountdown() {
     );
   }, []);
 
-  // Circular text component for the decorative rings
-  const CircularText = ({ text, className = "" }: { text: string; className?: string }) => {
-    const letters = text.split('');
-    const angleStep = 360 / letters.length;
-
-    return (
-      <div className={`relative ${className}`}>
-        <div className="relative w-16 h-16">
-          {letters.map((letter, index) => {
-            const angle = index * angleStep - 90; // Start from top
-            const radian = (angle * Math.PI) / 180;
-            const x = 28 + 24 * Math.cos(radian);
-            const y = 28 + 24 * Math.sin(radian);
-            
-            return (
-              <span
-                key={index}
-                className="absolute text-[8px] text-[#ffbcab] font-light"
-                style={{
-                  left: `${x}px`,
-                  top: `${y}px`,
-                  transform: `translate(-50%, -50%) rotate(${angle + 90}deg)`,
-                  transformOrigin: 'center'
-                }}
-              >
-                {letter === ' ' ? '•' : letter}
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
   // Memoize FireworksBackground to prevent re-rendering every second
   const memoizedFireworks = useMemo(() => (
     <FireworksBackground
@@ -155,16 +118,20 @@ export default function WeddingCountdown() {
           {/* Overlapping Circular Elements - Replacing Group 4 */}
           <div className="absolute -top-20 -right-48 w-32 h-32">
             {/* Circular Outer - Rotating */}
-            <img 
+            <Image 
               src="/Circular Outer.png" 
               alt="Circular outer rotating element" 
+              width={128}
+              height={128}
               className="absolute inset-0 w-full h-full animate-spin origin-center"
               style={{ animation: 'spin 15s linear infinite' }}
             />
             {/* Circular Inner - Static, overlapping */}
-            <img 
+            <Image 
               src="/Circular Inner.png" 
               alt="Circular inner static element" 
+              width={128}
+              height={128}
               className="absolute inset-0 w-full h-full"
             />
           </div>
