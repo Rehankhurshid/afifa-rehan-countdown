@@ -18,6 +18,7 @@ export function loadSMSState(): SMSState {
       return JSON.parse(data);
     }
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     console.log('Creating new SMS state file...');
   }
   

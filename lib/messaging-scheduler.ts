@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { WEDDING_EVENTS, generateDailyCountdownMessage, generateEventMessages, getSpecialMilestoneMessage, getDaysUntilWedding } from './wedding-messages';
 
 export interface ScheduledMessage {

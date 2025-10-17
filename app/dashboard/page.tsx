@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ScheduledMessage } from '../../lib/messaging-scheduler';
 
 export default function MessagingDashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [messages, setMessages] = useState<ScheduledMessage[]>([]);
   const [upcomingMessages, setUpcomingMessages] = useState<ScheduledMessage[]>([]);
   const [isSystemRunning, setIsSystemRunning] = useState(false);

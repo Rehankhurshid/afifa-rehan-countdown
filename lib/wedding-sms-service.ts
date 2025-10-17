@@ -1,6 +1,7 @@
 // Enhanced Wedding SMS Service with duplicate prevention
 import { Fast2SMSService } from './fast2sms-service.js';
 import { MSG91Service } from './msg91-service.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { generateDailyCountdownMessage, generateEventMessages, generateMilestoneMessage, getUpcomingEvent, WEDDING_EVENTS } from './wedding-messages';
 import { canSendMessage, markMessageSent } from './sms-state-tracker';
 import weddingConfig from '../config/wedding-config.json';

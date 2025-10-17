@@ -2,6 +2,7 @@ import { SMSService } from './messaging-scheduler';
 
 // Twilio SMS Service Implementation
 export class TwilioSMSService implements SMSService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private client: any;
   private fromNumber: string;
 
@@ -125,6 +126,7 @@ export function createSMSService(config: MessagingConfig): SMSService {
     
     default:
       // Return console service for demo
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { ConsoleSMSService } = require('./messaging-scheduler');
       return new ConsoleSMSService();
   }
