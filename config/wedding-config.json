@@ -4,7 +4,7 @@
       "7010766135",
       "9073236126"
     ],
-    "service": "fast2sms",
+    "service": "twilio",
     "msg91": {
       "authKey": "473977AMhCluCy68f1908cP1",
       "templateId": "YOUR_TEMPLATE_ID_HERE",
