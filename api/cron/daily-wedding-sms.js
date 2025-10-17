@@ -20,7 +20,9 @@ export default async function handler(req, res) {
 
     console.log('🚀 Starting automated wedding message cron job...');
     
-    // Check if we can send message today (duplicate prevention)
+    // For testing: temporarily disable duplicate prevention
+    // Uncomment the next 3 lines to re-enable duplicate prevention later
+    /*
     const messageType = 'daily';
     const canSend = canSendMessage(messageType);
     
@@ -32,6 +34,7 @@ export default async function handler(req, res) {
         skipped: true 
       });
     }
+    */
 
     // Generate the daily countdown message
     const message = generateDailyCountdownMessage();
@@ -48,8 +51,9 @@ export default async function handler(req, res) {
     const result = await smsService.sendMessage(phoneNumbers, message);
     
     if (result.success) {
-      // Mark message as sent to prevent duplicates
-      markMessageSent(messageType);
+      // For testing: temporarily disable marking as sent
+      // Uncomment the next line to re-enable duplicate prevention later
+      // markMessageSent(messageType);
       
       console.log('✅ SMS sent successfully!');
       console.log('📱 Message ID:', result.messageId);
