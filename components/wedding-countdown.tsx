@@ -226,8 +226,8 @@ export default function WeddingCountdown() {
 
         {/* Names */}
         <div className="text-center px-4 w-[90%] sm:w-auto">
-          <h1 className="text-[#c91b21] text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-normal leading-tight">
-            Afifa <span className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl">weds</span> Rehan
+          <h1 className="text-[#c91b21] text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-normal leading-tight">
+            Afifa <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">weds</span> Rehan
           </h1>
         </div>
 
