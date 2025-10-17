@@ -1,8 +1,8 @@
 // Next.js API Route for Vercel Cron Job
 // Import our messaging services
 const { Fast2SMSService } = require('../../lib/fast2sms-service.js');
-const { generateDailyCountdownMessage } = require('../../lib/wedding-messages.ts');
-const { canSendMessage, markMessageSent } = require('../../lib/sms-state-tracker.ts');
+const { generateDailyCountdownMessage } = require('../../lib/wedding-messages.js');
+const { canSendMessage, markMessageSent } = require('../../lib/sms-state-tracker.js');
 const weddingConfig = require('../../config/wedding-config.json');
 
 export default async function handler(req, res) {
