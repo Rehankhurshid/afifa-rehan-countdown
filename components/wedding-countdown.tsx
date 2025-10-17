@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 interface TimeLeft {
   days: number;
@@ -195,7 +196,7 @@ export default function WeddingCountdown() {
         {/* Date header */}
         <div className="flex flex-col items-center gap-2 relative">
           <h2 className="text-[#c91b21] text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-center">
-            October 22
+            <AnimatedShinyText>October 22</AnimatedShinyText>
           </h2>
           {/* Overlapping Circular Elements - Replacing Group 4 */}
           <div className="absolute -top-8 -right-40 sm:-top-12 sm:-right-64 w-36 h-36 sm:w-40 sm:h-40">
