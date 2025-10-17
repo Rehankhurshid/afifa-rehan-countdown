@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { WEDDING_EVENTS, generateDailyCountdownMessage, generateEventMessages, getSpecialMilestoneMessage, getDaysUntilWedding } from './wedding-messages';
+import { WEDDING_EVENTS, generateDailyCountdownMessage, generateEventMessages, generateMilestoneMessage, getDaysUntilWedding } from './wedding-messages';
 
 export interface ScheduledMessage {
   id: string;
@@ -50,7 +50,7 @@ export class WeddingMessageScheduler {
   private generateEventMessages(): void {
     WEDDING_EVENTS.forEach(event => {
       const eventDate = new Date(event.date);
-      const eventMessages = generateEventMessages(event.date);
+      const eventMessages = generateEventMessages(event);
 
       this.phoneNumbers.forEach(phoneNumber => {
         // Morning message (8 AM)
@@ -111,7 +111,7 @@ export class WeddingMessageScheduler {
 
       if (milestoneDate > new Date()) {
         this.phoneNumbers.forEach(phoneNumber => {
-          const message = getSpecialMilestoneMessage(days);
+          const message = generateMilestoneMessage();
           if (message) {
             this.messages.push({
               id: `milestone-${phoneNumber}-${days}days`,
