@@ -1,0 +1,27 @@
+{
+  "name": "Afifa & Rehan Wedding Countdown",
+  "short_name": "Wedding Countdown",
+  "description": "Wedding countdown for Afifa & Rehan - October 22, 2025",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#d87558",
+  "theme_color": "#d87558",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Icon-32w.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "favicon"
+    },
+    {
+      "src": "/Icon-256w.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["wedding", "countdown", "celebration"],
+  "lang": "en",
+  "dir": "ltr"
+}

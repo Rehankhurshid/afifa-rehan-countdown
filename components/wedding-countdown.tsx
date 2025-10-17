@@ -12,6 +12,34 @@ interface TimeLeft {
   seconds: number;
 }
 
+interface WeddingEvent {
+  name: string;
+  date: string;
+  time: string;
+  description: string;
+}
+
+const WEDDING_EVENTS: WeddingEvent[] = [
+  {
+    name: "Haldi Ceremony",
+    date: "2025-10-20",
+    time: "17:00",
+    description: "Beautiful turmeric ritual"
+  },
+  {
+    name: "Mehendi Celebration",
+    date: "2025-10-21", 
+    time: "18:00",
+    description: "Henna art and festivities"
+  },
+  {
+    name: "Nikah Ceremony",
+    date: "2025-10-22",
+    time: "20:00",
+    description: "The blessed union"
+  }
+];
+
 export default function WeddingCountdown() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
@@ -20,25 +48,66 @@ export default function WeddingCountdown() {
     seconds: 0
   });
   
+  const [upcomingEvent, setUpcomingEvent] = useState<{
+    event: WeddingEvent | null;
+    timeToEvent: TimeLeft;
+  }>({
+    event: null,
+    timeToEvent: { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  });
+  
   const countdownBoxesRef = useRef<(HTMLDivElement | null)[]>([]);
 
   // Wedding date: October 22, 2025 at 8PM
   const weddingDate = new Date('2025-10-22T20:00:00').getTime();
 
+  // Function to get next upcoming event
+  const getNextUpcomingEvent = () => {
+    const now = new Date().getTime();
+    
+    for (const event of WEDDING_EVENTS) {
+      const eventDateTime = new Date(`${event.date}T${event.time}:00`).getTime();
+      if (eventDateTime > now) {
+        return event;
+      }
+    }
+    return null; // All events have passed
+  };
+
+  // Function to calculate time difference
+  const calculateTimeDifference = (targetTime: number) => {
+    const now = new Date().getTime();
+    const difference = targetTime - now;
+
+    if (difference > 0) {
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((difference % (1000 * 60)) / 1000)
+      };
+    }
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = weddingDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+      // Main wedding countdown
+      setTimeLeft(calculateTimeDifference(weddingDate));
+      
+      // Upcoming event countdown
+      const nextEvent = getNextUpcomingEvent();
+      if (nextEvent) {
+        const eventDateTime = new Date(`${nextEvent.date}T${nextEvent.time}:00`).getTime();
+        setUpcomingEvent({
+          event: nextEvent,
+          timeToEvent: calculateTimeDifference(eventDateTime)
         });
       } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setUpcomingEvent({
+          event: null,
+          timeToEvent: { days: 0, hours: 0, minutes: 0, seconds: 0 }
+        });
       }
     }, 1000);
 
@@ -92,6 +161,20 @@ export default function WeddingCountdown() {
 
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
+      {/* Fixed Upcoming Event at Top */}
+      {upcomingEvent.event && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-[#d87558]/90 backdrop-blur-sm border-b border-[#ffbcab]/20">
+          <div className="text-center py-2 px-4">
+            <div className="text-[#ffbcab] text-sm font-mono tracking-wide">
+              NEXT: {upcomingEvent.event.name.toUpperCase()} • {' '}
+              {upcomingEvent.timeToEvent.days > 0 && `${upcomingEvent.timeToEvent.days}d `}
+              {(upcomingEvent.timeToEvent.days > 0 || upcomingEvent.timeToEvent.hours > 0) && `${upcomingEvent.timeToEvent.hours}h `}
+              {upcomingEvent.timeToEvent.minutes}m {upcomingEvent.timeToEvent.seconds}s
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Background Color */}
       <div className="absolute inset-0 bg-[#d87558]" />
       

@@ -1,0 +1,58 @@
+{
+  "messaging": {
+    "phoneNumbers": [
+      "7010766135",
+      "9073236126"
+    ],
+    "service": "fast2sms",
+    "msg91": {
+      "authKey": "473977AMhCluCy68f1908cP1",
+      "templateId": "YOUR_TEMPLATE_ID_HERE",
+      "senderId": "MSGIND"
+    },
+    "fast2sms": {
+      "apiKey": "2d6tZjXsRnrkEYgMwhOeSxuvGW809TqyNKbIDopJ3ziUaAB54f2jaUpWN9u8Owr5vQ4dtRXTPeMzCYcJ"
+    },
+    "twilio": {
+      "accountSid": "AC0a7aad18ae1dd8cea8c08c4f0d864015",
+      "authToken": "a65f6ddbaebe56b848911b130e7ccb14",
+      "fromNumber": "+16812022778"
+    },
+    "whatsapp": {
+      "apiKey": "your_whatsapp_api_key_here"
+    },
+    "email": {
+      "apiKey": "your_email_service_api_key_here",
+      "fromEmail": "wedding@yoursite.com"
+    }
+  },
+  "wedding": {
+    "date": "2025-10-22T20:00:00",
+    "siteUrl": "https://www.afifaziya.com/",
+    "events": [
+      {
+        "name": "Haldi Ceremony",
+        "date": "2025-10-20",
+        "time": "17:00",
+        "description": "Join us for the beautiful Haldi ceremony!"
+      },
+      {
+        "name": "Mehendi Celebration",
+        "date": "2025-10-21",
+        "time": "18:00",
+        "description": "Second day of Mehendi celebrations!"
+      },
+      {
+        "name": "Nikah Ceremony",
+        "date": "2025-10-22",
+        "time": "20:00",
+        "description": "The blessed union of Afifa and Rehan!"
+      }
+    ]
+  },
+  "schedule": {
+    "dailyMessageTime": "10:00",
+    "morningMessageTime": "08:00",
+    "milestoneMessageTime": "12:00"
+  }
+}
