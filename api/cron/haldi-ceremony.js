@@ -1,5 +1,5 @@
-// Haldi Ceremony Time - 5 PM
-const { Fast2SMSService } = require("../../lib/fast2sms-service.js");
+// Haldi Ceremony Message - 5 PM
+const { TwilioService } = require("../../lib/twilio-service.js");
 const weddingConfig = require("../../config/wedding-config.json");
 
 export default async function handler(req, res) {
@@ -30,8 +30,10 @@ Countdown: afifaziya.com
 
 From: AFIFA & REHAN`;
 
-    const smsService = new Fast2SMSService(
-      weddingConfig.messaging.fast2sms.apiKey
+    const smsService = new TwilioService(
+      weddingConfig.messaging.twilio.accountSid,
+      weddingConfig.messaging.twilio.authToken,
+      weddingConfig.messaging.twilio.fromNumber
     );
     const phoneNumbers = weddingConfig.messaging.phoneNumbers;
 
