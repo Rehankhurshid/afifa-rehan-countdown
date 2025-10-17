@@ -1,6 +1,6 @@
 // Next.js API Route for Vercel Cron Job
 // Import our messaging services
-const { TwilioService } = require("../../lib/twilio-service.js");
+const { Fast2SMSService } = require("../../lib/fast2sms-service.js");
 const {
   generateDailyCountdownMessage,
 } = require("../../lib/wedding-messages.js");
@@ -42,11 +42,9 @@ export default async function handler(req, res) {
     const message = generateDailyCountdownMessage();
     console.log("📝 Generated message:", message);
 
-    // Initialize Twilio service
-    const smsService = new TwilioService(
-      weddingConfig.messaging.twilio.accountSid,
-      weddingConfig.messaging.twilio.authToken,
-      weddingConfig.messaging.twilio.fromNumber
+    // Initialize Fast2SMS service
+    const smsService = new Fast2SMSService(
+      weddingConfig.messaging.fast2sms.apiKey
     );
 
     // Get phone numbers from config
