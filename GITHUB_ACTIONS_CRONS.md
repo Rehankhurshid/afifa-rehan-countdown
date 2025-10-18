@@ -1,9 +1,11 @@
 # Cron Jobs Migration: Vercel to GitHub Actions
 
 ## Overview
+
 All wedding countdown SMS cron jobs have been migrated from Vercel to GitHub Actions. The system uses **FAST2SMS** for all SMS delivery.
 
 ## SMS Service
+
 - **Provider**: FAST2SMS
 - **Configuration**: All cron jobs are configured to use FAST2SMS API
 - **Alternative Providers**: MSG91 support has been removed
@@ -11,29 +13,31 @@ All wedding countdown SMS cron jobs have been migrated from Vercel to GitHub Act
 ## Changes Made
 
 ### 1. GitHub Actions Workflow Created
+
 - **File**: `.github/workflows/wedding-crons.yml`
 - **Scheduled Jobs**: 10 cron jobs configured to run at specified times
 - **Trigger**: Scheduled via GitHub Actions with manual dispatch support
 
 ### 2. Vercel Configuration Removed
+
 - **File**: `vercel.json`
 - **Change**: Removed all cron job definitions from `vercel.json`
 - **Status**: Vercel will no longer execute any scheduled cron jobs
 
 ## Cron Jobs Configured
 
-| Job | Schedule | Description |
-|-----|----------|-------------|
-| Daily SMS | `0 14 * * *` | Daily wedding countdown at 2 PM UTC |
-| Haldi Morning | `0 10 20 10 *` | Oct 20 at 10 AM UTC |
-| Haldi Afternoon | `0 14 20 10 *` | Oct 20 at 2 PM UTC |
-| Haldi Ceremony | `0 17 20 10 *` | Oct 20 at 5 PM UTC |
-| Mehendi Morning | `0 10 21 10 *` | Oct 21 at 10 AM UTC |
-| Mehendi Afternoon | `0 14 21 10 *` | Oct 21 at 2 PM UTC |
-| Mehendi Ceremony | `0 18 21 10 *` | Oct 21 at 6 PM UTC |
-| Wedding Morning | `0 10 22 10 *` | Oct 22 at 10 AM UTC |
-| Wedding Afternoon | `0 14 22 10 *` | Oct 22 at 2 PM UTC |
-| Wedding Ceremony | `0 20 22 10 *` | Oct 22 at 8 PM UTC |
+| Job               | Schedule       | Description                         |
+| ----------------- | -------------- | ----------------------------------- |
+| Daily SMS         | `0 14 * * *`   | Daily wedding countdown at 2 PM UTC |
+| Haldi Morning     | `0 10 20 10 *` | Oct 20 at 10 AM UTC                 |
+| Haldi Afternoon   | `0 14 20 10 *` | Oct 20 at 2 PM UTC                  |
+| Haldi Ceremony    | `0 17 20 10 *` | Oct 20 at 5 PM UTC                  |
+| Mehendi Morning   | `0 10 21 10 *` | Oct 21 at 10 AM UTC                 |
+| Mehendi Afternoon | `0 14 21 10 *` | Oct 21 at 2 PM UTC                  |
+| Mehendi Ceremony  | `0 18 21 10 *` | Oct 21 at 6 PM UTC                  |
+| Wedding Morning   | `0 10 22 10 *` | Oct 22 at 10 AM UTC                 |
+| Wedding Afternoon | `0 14 22 10 *` | Oct 22 at 2 PM UTC                  |
+| Wedding Ceremony  | `0 20 22 10 *` | Oct 22 at 8 PM UTC                  |
 
 ## Required GitHub Secrets
 
@@ -43,6 +47,7 @@ Add these secrets to your GitHub repository settings:
 2. **FAST2SMS_API_KEY** - FAST2SMS API key for SMS delivery
 
 ### How to Add Secrets:
+
 1. Go to repository → Settings → Secrets and variables → Actions
 2. Click "New repository secret"
 3. Add the secrets above
@@ -50,6 +55,7 @@ Add these secrets to your GitHub repository settings:
 ## Manual Testing
 
 You can manually trigger any cron job from the GitHub Actions tab:
+
 1. Go to repository → Actions → "Wedding Countdown Cron Jobs"
 2. Click "Run workflow" dropdown
 3. Select "Run workflow" to trigger immediately
@@ -57,6 +63,7 @@ You can manually trigger any cron job from the GitHub Actions tab:
 ## Cron API Routes
 
 All cron job endpoints remain in `/api/cron/` directory:
+
 - `api/cron/daily-wedding-sms.js`
 - `api/cron/haldi-morning.js`
 - `api/cron/haldi-afternoon.js`
@@ -80,6 +87,7 @@ All cron job endpoints remain in `/api/cron/` directory:
 ## Rollback
 
 If you need to revert to Vercel crons:
+
 1. Restore the original cron configuration in `vercel.json`
 2. Disable or delete the GitHub Actions workflow
 3. Re-deploy to Vercel
