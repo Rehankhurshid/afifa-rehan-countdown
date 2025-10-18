@@ -4,11 +4,11 @@
       "7010766135",
       "9073236126"
     ],
-    "service": "fast2sms",
+    "service": "msg91",
     "msg91": {
       "authKey": "473977AMhCluCy68f1908cP1",
-      "templateId": "YOUR_TEMPLATE_ID_HERE",
-      "senderId": "MSGIND"
+      "templateId": "68f240f80bbbcb6a68762f37",
+      "senderId": "rehankh90"
     },
     "fast2sms": {
       "apiKey": "2d6tZjXsRnrkEYgMwhOeSxuvGW809TqyNKbIDopJ3ziUaAB54f2jaUpWN9u8Owr5vQ4dtRXTPeMzCYcJ"

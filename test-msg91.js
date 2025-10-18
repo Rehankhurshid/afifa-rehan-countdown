@@ -1,12 +1,12 @@
 const { MSG91Service } = require("./lib/msg91-service.js");
-const { generateDailyCountdownMessage } = require("./lib/wedding-messages.ts");
+const { generateDailyCountdownMessage } = require("./lib/wedding-messages.js");
 
 async function testMSG91() {
   try {
     console.log("🚀 TESTING MSG91 SMS SERVICE\n");
 
-    // You'll need to replace this with your actual MSG91 auth key
-    const authKey = "YOUR_MSG91_AUTH_KEY_HERE";
+    // MSG91 auth key from config
+    const authKey = "473977AMhCluCy68f1908cP1";
 
     if (authKey === "YOUR_MSG91_AUTH_KEY_HERE") {
       console.log("❌ Please update the MSG91 auth key in the script");
@@ -52,4 +52,4 @@ console.log("3. Replace YOUR_MSG91_AUTH_KEY_HERE in this script");
 console.log("4. Run the test again\n");
 
 // Uncomment the line below after adding your auth key
-// testMSG91();
+testMSG91();

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
+import { WeddingInformationDrawer } from './wedding-information-drawer';
 
 interface TimeLeft {
   days: number;
@@ -254,6 +255,9 @@ export default function WeddingCountdown() {
           ))}
         </div>
       </div>
+
+      {/* Wedding Information Drawer */}
+      <WeddingInformationDrawer />
     </div>
   );
 }
