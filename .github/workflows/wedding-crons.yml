@@ -43,8 +43,7 @@ jobs:
       - name: Run Daily SMS Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -73,8 +72,7 @@ jobs:
       - name: Run Haldi Morning Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -101,8 +99,7 @@ jobs:
       - name: Run Haldi Afternoon Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -129,8 +126,7 @@ jobs:
       - name: Run Haldi Ceremony Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -157,8 +153,7 @@ jobs:
       - name: Run Mehendi Morning Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -185,8 +180,7 @@ jobs:
       - name: Run Mehendi Afternoon Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -213,8 +207,7 @@ jobs:
       - name: Run Mehendi Ceremony Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -241,8 +234,7 @@ jobs:
       - name: Run Wedding Morning Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -269,8 +261,7 @@ jobs:
       - name: Run Wedding Afternoon Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "
@@ -297,8 +288,7 @@ jobs:
       - name: Run Wedding Ceremony Cron
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
-          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+          FAST2SMS_API_KEY: ${{ secrets.FAST2SMS_API_KEY }}
         run: |
           cd my-app
           node -e "

@@ -1,7 +1,12 @@
 # Cron Jobs Migration: Vercel to GitHub Actions
 
 ## Overview
-All wedding countdown SMS cron jobs have been migrated from Vercel to GitHub Actions for better control and flexibility.
+All wedding countdown SMS cron jobs have been migrated from Vercel to GitHub Actions. The system uses **FAST2SMS** for all SMS delivery.
+
+## SMS Service
+- **Provider**: FAST2SMS
+- **Configuration**: All cron jobs are configured to use FAST2SMS API
+- **Alternative Providers**: MSG91 support has been removed
 
 ## Changes Made
 
@@ -35,8 +40,12 @@ All wedding countdown SMS cron jobs have been migrated from Vercel to GitHub Act
 Add these secrets to your GitHub repository settings:
 
 1. **CRON_SECRET** - Authorization token for cron job verification
-2. **MSG91_AUTH_KEY** - MSG91 API authentication key
-3. **MSG91_SENDER_ID** - MSG91 sender ID
+2. **FAST2SMS_API_KEY** - FAST2SMS API key for SMS delivery
+
+### How to Add Secrets:
+1. Go to repository → Settings → Secrets and variables → Actions
+2. Click "New repository secret"
+3. Add the secrets above
 
 ## Manual Testing
 
