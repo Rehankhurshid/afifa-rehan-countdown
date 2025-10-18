@@ -1,0 +1,311 @@
+name: Wedding Countdown Cron Jobs
+
+on:
+  schedule:
+    # Daily wedding SMS at 2 PM UTC
+    - cron: '0 14 * * *'
+    # Haldi Morning at 10 AM UTC on Oct 20
+    - cron: '0 10 20 10 *'
+    # Haldi Afternoon at 2 PM UTC on Oct 20
+    - cron: '0 14 20 10 *'
+    # Haldi Ceremony at 5 PM UTC on Oct 20
+    - cron: '0 17 20 10 *'
+    # Mehendi Morning at 10 AM UTC on Oct 21
+    - cron: '0 10 21 10 *'
+    # Mehendi Afternoon at 2 PM UTC on Oct 21
+    - cron: '0 14 21 10 *'
+    # Mehendi Ceremony at 6 PM UTC on Oct 21
+    - cron: '0 18 21 10 *'
+    # Wedding Morning at 10 AM UTC on Oct 22
+    - cron: '0 10 22 10 *'
+    # Wedding Afternoon at 2 PM UTC on Oct 22
+    - cron: '0 14 22 10 *'
+    # Wedding Ceremony at 8 PM UTC on Oct 22
+    - cron: '0 20 22 10 *'
+  workflow_dispatch:
+
+jobs:
+  daily-sms:
+    if: github.event.schedule == '0 14 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Daily Wedding SMS
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: cd my-app && npm install
+      
+      - name: Run Daily SMS Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/daily-wedding-sms.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  haldi-morning:
+    if: github.event.schedule == '0 10 20 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Haldi Morning SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Haldi Morning Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/haldi-morning.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  haldi-afternoon:
+    if: github.event.schedule == '0 14 20 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Haldi Afternoon SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Haldi Afternoon Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/haldi-afternoon.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  haldi-ceremony:
+    if: github.event.schedule == '0 17 20 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Haldi Ceremony SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Haldi Ceremony Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/haldi-ceremony.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  mehendi-morning:
+    if: github.event.schedule == '0 10 21 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Mehendi Morning SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Mehendi Morning Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/mehendi-morning.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  mehendi-afternoon:
+    if: github.event.schedule == '0 14 21 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Mehendi Afternoon SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Mehendi Afternoon Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/mehendi-afternoon.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  mehendi-ceremony:
+    if: github.event.schedule == '0 18 21 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Mehendi Ceremony SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Mehendi Ceremony Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/mehendi-ceremony.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  wedding-morning:
+    if: github.event.schedule == '0 10 22 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Wedding Morning SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Wedding Morning Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/wedding-morning.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  wedding-afternoon:
+    if: github.event.schedule == '0 14 22 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Wedding Afternoon SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Wedding Afternoon Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/wedding-afternoon.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
+
+  wedding-ceremony:
+    if: github.event.schedule == '0 20 22 10 *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: Wedding Ceremony SMS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd my-app && npm install
+      - name: Run Wedding Ceremony Cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG91_AUTH_KEY: ${{ secrets.MSG91_AUTH_KEY }}
+          MSG91_SENDER_ID: ${{ secrets.MSG91_SENDER_ID }}
+        run: |
+          cd my-app
+          node -e "
+          process.env.NODE_ENV = 'production';
+          const handler = require('./api/cron/wedding-ceremony.js').default;
+          handler(
+            { method: 'POST', headers: { authorization: 'Bearer ' + process.env.CRON_SECRET } },
+            { status: (code) => ({ json: (data) => console.log(JSON.stringify(data)) }), json: (data) => console.log(JSON.stringify(data)) }
+          ).catch(err => { console.error(err); process.exit(1); });
+          "
