@@ -13,6 +13,10 @@
       "schedule": "55 15 18 10 *"
     },
     {
+      "path": "/api/cron/wedding-ceremony",
+      "schedule": "00 16 18 10 *"
+    },
+    {
       "path": "/api/cron/haldi-morning",
       "schedule": "30 4 20 10 *"
     },
