@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
+import confetti from 'canvas-confetti';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
 import { WeddingInformationDrawer } from './wedding-information-drawer';
 
@@ -138,7 +139,7 @@ export default function WeddingCountdown() {
     });
 
     // Heartbeat animation for seconds box (index 3) - scale from 1 to 1.05
-    gsap.fromTo(countdownBoxesRef.current[3], 
+    gsap.fromTo(countdownBoxesRef.current[3],
       { scale: 1 }, // Starting state (normal size)
       {
         scale: 1.05,
@@ -149,6 +150,43 @@ export default function WeddingCountdown() {
         delay: 1.3 // Start after the stagger animation completes
       }
     );
+  }, []);
+
+  // Confetti celebration effect on page load
+  useEffect(() => {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval: NodeJS.Timeout = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+
+      // Fire confetti from both sides
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        colors: ['#ffbcab', '#c91b21', '#d87558']
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        colors: ['#ffbcab', '#c91b21', '#d87558']
+      });
+    }, 250);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Memoize FireworksBackground to prevent re-rendering every second
