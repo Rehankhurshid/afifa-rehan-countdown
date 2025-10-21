@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
-import confetti from 'canvas-confetti';
+import { Confetti } from './magicui/confetti';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
 import { WeddingInformationDrawer } from './wedding-information-drawer';
 
@@ -152,43 +152,6 @@ export default function WeddingCountdown() {
     );
   }, []);
 
-  // Confetti celebration effect on page load
-  useEffect(() => {
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
-    function randomInRange(min: number, max: number) {
-      return Math.random() * (max - min) + min;
-    }
-
-    const interval: NodeJS.Timeout = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-
-      // Fire confetti from both sides
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: 0.6 },
-        colors: ['#ffbcab', '#c91b21', '#d87558']
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: 0.6 },
-        colors: ['#ffbcab', '#c91b21', '#d87558']
-      });
-    }, 250);
-
-    return () => clearInterval(interval);
-  }, []);
-
   // Memoize FireworksBackground to prevent re-rendering every second
   const memoizedFireworks = useMemo(() => (
     <FireworksBackground
@@ -200,6 +163,19 @@ export default function WeddingCountdown() {
 
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
+      {/* Confetti Canvas */}
+      <Confetti
+        className="absolute inset-0 pointer-events-none"
+        options={{
+          particleCount: 100,
+          spread: 360,
+          startVelocity: 30,
+          ticks: 60,
+          zIndex: 9999,
+          colors: ['#ffbcab', '#c91b21', '#d87558']
+        }}
+      />
+
       {/* Fixed Upcoming Event at Top */}
       {upcomingEvent.event && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-[#d87558]/90 backdrop-blur-sm border-b border-[#ffbcab]/20">
