@@ -156,7 +156,7 @@ export default function WeddingCountdown() {
   useEffect(() => {
     const duration = 3000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
     function randomInRange(min: number, max: number) {
       return Math.random() * (max - min) + min;
@@ -175,13 +175,13 @@ export default function WeddingCountdown() {
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        origin: { x: randomInRange(0.1, 0.3), y: 0.6 },
         colors: ['#ffbcab', '#c91b21', '#d87558']
       });
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        origin: { x: randomInRange(0.7, 0.9), y: 0.6 },
         colors: ['#ffbcab', '#c91b21', '#d87558']
       });
     }, 250);
