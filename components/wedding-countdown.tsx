@@ -83,14 +83,17 @@ export default function WeddingCountdown() {
     });
 
     // Floating hearts animation
-    gsap.to(heartsRef.current?.querySelectorAll('.floating-heart'), {
-      y: -15,
-      duration: 2,
-      ease: "power1.inOut",
-      repeat: -1,
-      yoyo: true,
-      stagger: 0.3
-    });
+    const floatingHearts = heartsRef.current?.querySelectorAll('.floating-heart');
+    if (floatingHearts) {
+      gsap.to(floatingHearts, {
+        y: -15,
+        duration: 2,
+        ease: "power1.inOut",
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.3
+      });
+    }
 
   }, []);
 
