@@ -1,186 +1,115 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { FireworksBackground } from './animate-ui/components/backgrounds/fireworks';
-import { WeddingInformationDrawer } from './wedding-information-drawer';
-
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-interface WeddingEvent {
-  name: string;
-  date: string;
-  time: string;
-  description: string;
-}
-
-const WEDDING_EVENTS: WeddingEvent[] = [
-  {
-    name: "Haldi Ceremony",
-    date: "2025-10-20",
-    time: "17:00",
-    description: "Beautiful turmeric ritual"
-  },
-  {
-    name: "Mehendi Celebration",
-    date: "2025-10-21", 
-    time: "18:00",
-    description: "Henna art and festivities"
-  },
-  {
-    name: "Nikah Ceremony",
-    date: "2025-10-22",
-    time: "20:00",
-    description: "The blessed union"
-  }
-];
 
 export default function WeddingCountdown() {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-  
-  const [upcomingEvent, setUpcomingEvent] = useState<{
-    event: WeddingEvent | null;
-    timeToEvent: TimeLeft;
-  }>({
-    event: null,
-    timeToEvent: { days: 0, hours: 0, minutes: 0, seconds: 0 }
-  });
-  
-  const countdownBoxesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const weAreRef = useRef<HTMLDivElement>(null);
+  const marriedRef = useRef<HTMLDivElement>(null);
+  const namesRef = useRef<HTMLDivElement>(null);
+  const heartsRef = useRef<HTMLDivElement>(null);
+  const dateRef = useRef<HTMLDivElement>(null);
 
-  // Wedding date: October 22, 2025 at 8PM
-  const weddingDate = new Date('2025-10-22T20:00:00').getTime();
-
-  // Function to get next upcoming event
-  const getNextUpcomingEvent = () => {
-    const now = new Date().getTime();
-    
-    for (const event of WEDDING_EVENTS) {
-      const eventDateTime = new Date(`${event.date}T${event.time}:00`).getTime();
-      if (eventDateTime > now) {
-        return event;
-      }
-    }
-    return null; // All events have passed
-  };
-
-  // Function to calculate time difference
-  const calculateTimeDifference = (targetTime: number) => {
-    const now = new Date().getTime();
-    const difference = targetTime - now;
-
-    if (difference > 0) {
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((difference % (1000 * 60)) / 1000)
-      };
-    }
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-  };
-
+  // GSAP animation for exciting entrance
   useEffect(() => {
-    const timer = setInterval(() => {
-      // Main wedding countdown
-      setTimeLeft(calculateTimeDifference(weddingDate));
-      
-      // Upcoming event countdown
-      const nextEvent = getNextUpcomingEvent();
-      if (nextEvent) {
-        const eventDateTime = new Date(`${nextEvent.date}T${nextEvent.time}:00`).getTime();
-        setUpcomingEvent({
-          event: nextEvent,
-          timeToEvent: calculateTimeDifference(eventDateTime)
-        });
-      } else {
-        setUpcomingEvent({
-          event: null,
-          timeToEvent: { days: 0, hours: 0, minutes: 0, seconds: 0 }
-        });
-      }
-    }, 1000);
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    return () => clearInterval(timer);
-  }, [weddingDate]);
-
-  // GSAP animation for staggered entrance with blur
-  useEffect(() => {
-    // Set initial state for boxes (invisible, scaled down, and blurred)
-    gsap.set(countdownBoxesRef.current, {
+    // Set initial states
+    gsap.set([weAreRef.current, marriedRef.current, namesRef.current, dateRef.current], {
       opacity: 0,
-      scale: 0,
-      y: 50,
-      filter: "blur(10px)"
+      y: 60,
+      scale: 0.8,
+      filter: "blur(15px)"
     });
 
-    // Animate boxes in from left to right with stagger and blur-in
-    gsap.to(countdownBoxesRef.current, {
+    gsap.set(heartsRef.current, {
+      opacity: 0,
+      scale: 0
+    });
+
+    // Animate "We Are" first
+    tl.to(weAreRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      duration: 1,
+      delay: 0.3
+    })
+    // Then "MARRIED!" with a bigger, more dramatic entrance
+    .to(marriedRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      duration: 1.2,
+      ease: "elastic.out(1, 0.5)"
+    }, "-=0.3")
+    // Floating hearts burst
+    .to(heartsRef.current, {
       opacity: 1,
       scale: 1,
-      y: 0,
-      filter: "blur(0px)",
       duration: 0.8,
-      ease: "back.out(1.7)",
-      stagger: 0.2, // 0.2 second delay between each box
-      delay: 0.5 // Initial delay before animation starts
+      ease: "back.out(1.7)"
+    }, "-=0.5")
+    // Names reveal
+    .to(namesRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      duration: 0.8
+    }, "-=0.4")
+    // Date reveal
+    .to(dateRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      duration: 0.8
+    }, "-=0.3");
+
+    // Continuous subtle pulse animation on "MARRIED!"
+    gsap.to(marriedRef.current, {
+      scale: 1.02,
+      duration: 1.5,
+      ease: "power1.inOut",
+      repeat: -1,
+      yoyo: true,
+      delay: 3
     });
 
-    // Heartbeat animation for seconds box (index 3) - scale from 1 to 1.05
-    gsap.fromTo(countdownBoxesRef.current[3], 
-      { scale: 1 }, // Starting state (normal size)
-      {
-        scale: 1.05,
-        duration: 0.5,
-        ease: "power2.inOut",
-        repeat: -1,
-        yoyo: true,
-        delay: 1.3 // Start after the stagger animation completes
-      }
-    );
+    // Floating hearts animation
+    gsap.to(heartsRef.current?.querySelectorAll('.floating-heart'), {
+      y: -15,
+      duration: 2,
+      ease: "power1.inOut",
+      repeat: -1,
+      yoyo: true,
+      stagger: 0.3
+    });
+
   }, []);
 
-  // Memoize FireworksBackground to prevent re-rendering every second
+  // Memoize FireworksBackground to prevent re-rendering
   const memoizedFireworks = useMemo(() => (
     <FireworksBackground
       className="absolute inset-0 flex items-center justify-center rounded-xl"
       color="#FFBCAB"
-      population={1}
+      population={3}
     />
-  ), []); // Empty dependency array - only renders once
+  ), []);
 
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
-      {/* Fixed Upcoming Event at Top */}
-      {upcomingEvent.event && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#d87558]/90 backdrop-blur-sm border-b border-[#ffbcab]/20">
-          <div className="text-center py-2 px-4">
-            <div className="text-[#ffbcab] text-sm font-mono tracking-wide">
-              NEXT: {upcomingEvent.event.name.toUpperCase()} • {' '}
-              {upcomingEvent.timeToEvent.days > 0 && `${upcomingEvent.timeToEvent.days}d `}
-              {(upcomingEvent.timeToEvent.days > 0 || upcomingEvent.timeToEvent.hours > 0) && `${upcomingEvent.timeToEvent.hours}h `}
-              {upcomingEvent.timeToEvent.minutes}m {upcomingEvent.timeToEvent.seconds}s
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div ref={containerRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
       {/* Background Color */}
       <div className="absolute inset-0 bg-[#d87558]" />
-      
+
       {/* Paperboard Texture */}
-      <div 
+      <div
         className="absolute inset-0 opacity-50"
         style={{
           background: 'url(/paperboard-texture\\ 1.png) lightgray 50% / cover no-repeat',
@@ -188,76 +117,85 @@ export default function WeddingCountdown() {
         }}
       />
 
-      {/* Fireworks Background - Memoized to prevent restart */}
+      {/* Fireworks Background - More frequent for celebration! */}
       {memoizedFireworks}
 
       {/* Main content */}
       <div className="flex flex-col items-center gap-4 sm:gap-6 z-10 w-full max-w-4xl">
-        {/* Date header */}
-        <div className="flex flex-col items-center gap-2 relative">
-          <h2 className="text-[#c91b21] text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-center">
-            October 22
-          </h2>
-          {/* Overlapping Circular Elements - Replacing Group 4 */}
-          <div className="absolute -top-8 -right-40 sm:-top-12 sm:-right-64 w-36 h-36 sm:w-40 sm:h-40">
-            {/* Circular Outer - Rotating */}
-            <Image 
-              src="/Circular Outer.png" 
-              alt="Circular outer rotating element" 
-              width={160}
-              height={160}
-              className="absolute inset-0 w-full h-full animate-spin origin-center"
-              style={{ animation: 'spin 15s linear infinite' }}
-            />
-            {/* Circular Inner - Static, overlapping */}
-            <Image 
-              src="/Circular Inner.png" 
-              alt="Circular inner static element" 
-              width={160}
-              height={160}
-              className="absolute inset-0 w-full h-full"
-            />
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#c91b21] rounded-full" />
-            <span className="text-[#c91b21] text-xl sm:text-2xl font-serif">2025</span>
-            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#c91b21] rounded-full" />
-          </div>
+
+        {/* Overlapping Circular Elements */}
+        <div className="absolute top-8 right-4 sm:top-12 sm:right-12 md:right-24 w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40">
+          {/* Circular Outer - Rotating */}
+          <Image
+            src="/Circular Outer.png"
+            alt="Circular outer rotating element"
+            width={160}
+            height={160}
+            className="absolute inset-0 w-full h-full animate-spin origin-center"
+            style={{ animation: 'spin 15s linear infinite' }}
+          />
+          {/* Circular Inner - Static, overlapping */}
+          <Image
+            src="/Circular Inner.png"
+            alt="Circular inner static element"
+            width={160}
+            height={160}
+            className="absolute inset-0 w-full h-full"
+          />
+        </div>
+
+        {/* "We Are" text */}
+        <div ref={weAreRef} className="text-center">
+          <span className="text-[#ffbcab] text-2xl sm:text-3xl md:text-4xl font-serif tracking-widest">
+            We Are
+          </span>
+        </div>
+
+        {/* "MARRIED!" text - The star of the show */}
+        <div ref={marriedRef} className="text-center relative">
+          <h1 className="text-[#c91b21] text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] font-serif font-normal leading-none tracking-tight"
+              style={{
+                textShadow: '0 4px 30px rgba(201, 27, 33, 0.3), 0 0 60px rgba(255, 188, 171, 0.2)'
+              }}>
+            MARRIED!
+          </h1>
+
+          {/* Decorative sparkles around MARRIED */}
+          <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 text-2xl sm:text-3xl animate-pulse">✨</div>
+          <div className="absolute -top-2 -right-4 sm:-top-4 sm:-right-6 text-2xl sm:text-3xl animate-pulse" style={{ animationDelay: '0.5s' }}>✨</div>
+          <div className="absolute -bottom-2 left-1/4 text-xl sm:text-2xl animate-pulse" style={{ animationDelay: '0.3s' }}>💫</div>
+          <div className="absolute -bottom-4 right-1/4 text-xl sm:text-2xl animate-pulse" style={{ animationDelay: '0.7s' }}>💫</div>
+        </div>
+
+        {/* Floating Hearts */}
+        <div ref={heartsRef} className="flex items-center justify-center gap-3 sm:gap-6 py-2">
+          <span className="floating-heart text-3xl sm:text-4xl">💕</span>
+          <span className="floating-heart text-4xl sm:text-5xl" style={{ animationDelay: '0.2s' }}>❤️</span>
+          <span className="floating-heart text-3xl sm:text-4xl" style={{ animationDelay: '0.4s' }}>💕</span>
         </div>
 
         {/* Names */}
-        <div className="text-center px-4 w-[90%] sm:w-auto">
-          <h1 className="text-[#c91b21] text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-normal leading-tight">
-            Afifa <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">weds</span> Rehan
-          </h1>
+        <div ref={namesRef} className="text-center px-4 w-[90%] sm:w-auto">
+          <h2 className="text-[#c91b21] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-normal leading-tight">
+            Afifa <span className="text-[#ffbcab] text-2xl sm:text-3xl md:text-4xl">&</span> Rehan
+          </h2>
         </div>
 
-        {/* Countdown */}
-        <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center">
-          {[
-            { value: timeLeft.days, label: 'DAYS' },
-            { value: timeLeft.hours, label: 'HOURS' },
-            { value: timeLeft.minutes, label: 'MINUTES' },
-            { value: timeLeft.seconds, label: 'SECONDS' }
-          ].map((item, index) => (
-            <div 
-              key={index}
-              ref={(el) => { countdownBoxesRef.current[index] = el; }}
-              className="flex flex-col items-center justify-center flex-1 sm:w-20 h-16 sm:h-24 px-1 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
-            >
-              <span className="text-2xl sm:text-4xl font-serif leading-none">
-                {item.value.toString().padStart(2, '0')}
-              </span>
-              <span className="text-xs font-mono font-normal tracking-wider mt-1">
-                {item.label}
-              </span>
-            </div>
-          ))}
+        {/* Wedding Date */}
+        <div ref={dateRef} className="flex flex-col items-center gap-2 mt-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 sm:w-12 h-[1px] bg-[#ffbcab]/50" />
+            <span className="text-[#ffbcab] text-lg sm:text-xl font-mono tracking-widest">
+              October 22, 2025
+            </span>
+            <div className="w-8 sm:w-12 h-[1px] bg-[#ffbcab]/50" />
+          </div>
+          <p className="text-[#ffbcab]/80 text-sm sm:text-base font-serif italic">
+            Forever begins now
+          </p>
         </div>
+
       </div>
-
-      {/* Wedding Information Drawer */}
-      <WeddingInformationDrawer />
     </div>
   );
 }
