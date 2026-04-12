@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { FireworksBackground } from "./animate-ui/components/backgrounds/fireworks";
@@ -9,15 +9,57 @@ import { WeddingInformationDrawer } from "./wedding-information-drawer";
 // The blessed moment — October 22, 2025 at 9 PM
 const WEDDING_MOMENT = new Date("2025-10-22T21:00:00").getTime();
 
-function getTimeDiff(target: number) {
-  const diff = Math.abs(Date.now() - target);
-  return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-    minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-    seconds: Math.floor((diff % (1000 * 60)) / 1000),
-  };
+function getTimeSince() {
+  const diff = Math.abs(Date.now() - WEDDING_MOMENT);
+  const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const totalHours = Math.floor(diff / (1000 * 60 * 60));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  const months = Math.floor(totalDays / 30.44);
+  const daysAfterMonths = Math.floor(totalDays - months * 30.44);
+  const weeks = Math.floor(totalDays / 7);
+  const daysAfterWeeks = totalDays % 7;
+
+  return { totalDays, totalHours, hours, minutes, seconds, months, daysAfterMonths, weeks, daysAfterWeeks };
 }
+
+type Format = { parts: { value: string; label: string }[] };
+
+function getFormats(t: ReturnType<typeof getTimeSince>): Format[] {
+  return [
+    {
+      parts: [
+        { value: String(t.totalDays), label: t.totalDays === 1 ? "day" : "days" },
+        { value: String(t.hours), label: t.hours === 1 ? "hour" : "hours" },
+        { value: String(t.minutes), label: t.minutes === 1 ? "min" : "mins" },
+      ],
+    },
+    {
+      parts: [
+        { value: String(t.months), label: t.months === 1 ? "month" : "months" },
+        { value: String(t.daysAfterMonths), label: t.daysAfterMonths === 1 ? "day" : "days" },
+        { value: String(t.hours), label: t.hours === 1 ? "hour" : "hours" },
+      ],
+    },
+    {
+      parts: [
+        { value: String(t.weeks), label: t.weeks === 1 ? "week" : "weeks" },
+        { value: String(t.daysAfterWeeks), label: t.daysAfterWeeks === 1 ? "day" : "days" },
+        { value: String(t.hours), label: t.hours === 1 ? "hour" : "hours" },
+      ],
+    },
+    {
+      parts: [
+        { value: t.totalHours.toLocaleString(), label: "hours" },
+        { value: String(t.minutes), label: t.minutes === 1 ? "min" : "mins" },
+        { value: String(t.seconds), label: "sec" },
+      ],
+    },
+  ];
+}
+
+const FORMAT_INTERVAL = 5000;
 
 export default function WeddingCountdown() {
   const weddingPassed = useRef(Date.now() > WEDDING_MOMENT).current;
@@ -27,14 +69,18 @@ export default function WeddingCountdown() {
   );
   const [finaleCount, setFinaleCount] = useState(3);
   const [isMarried, setIsMarried] = useState(false);
-  const [time, setTime] = useState(getTimeDiff(WEDDING_MOMENT));
+  const [timeSince, setTimeSince] = useState(getTimeSince);
+  const [formatIndex, setFormatIndex] = useState(0);
 
-  const boxesRef = useRef<(HTMLDivElement | null)[]>([]);
   const finaleBoxesRef = useRef<(HTMLDivElement | null)[]>([]);
   const finaleOverlayRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
   const marriedTextRef = useRef<HTMLDivElement>(null);
-  const sinceTextRef = useRef<HTMLDivElement>(null);
+  const sinceAreaRef = useRef<HTMLDivElement>(null);
+  const formatLineRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Pre-compute formats
+  const formats = useMemo(() => getFormats(timeSince), [timeSince]);
 
   // ── Finale: cinematic last-second countdown ──
   useEffect(() => {
@@ -45,7 +91,6 @@ export default function WeddingCountdown() {
       const boxes = finaleBoxesRef.current.filter(Boolean);
       const secBox = finaleBoxesRef.current[3];
 
-      // Boxes entrance (staggered, blurred → sharp)
       tl.fromTo(
         boxes,
         { opacity: 0, scale: 0, y: 40, filter: "blur(10px)" },
@@ -60,14 +105,11 @@ export default function WeddingCountdown() {
         }
       );
 
-      // Countdown ticks: 3 → 2 → 1 → 0
-      const ticks = [
+      [
         { value: 2, at: 1.3 },
         { value: 1, at: 2.0 },
         { value: 0, at: 2.7 },
-      ];
-
-      ticks.forEach(({ value, at }) => {
+      ].forEach(({ value, at }) => {
         tl.call(() => setFinaleCount(value), [], at);
         if (secBox) {
           tl.fromTo(
@@ -79,7 +121,6 @@ export default function WeddingCountdown() {
         }
       });
 
-      // Soft warm glow at zero — stays in palette
       tl.to(
         boxes,
         {
@@ -91,7 +132,6 @@ export default function WeddingCountdown() {
         3.0
       );
 
-      // Transition to flash
       tl.call(() => setPhase("flash"), [], 3.6);
     });
 
@@ -123,13 +163,13 @@ export default function WeddingCountdown() {
     return () => ctx.revert();
   }, [phase]);
 
-  // ── Live timer (counts down before wedding, counts up after) ──
+  // ── Live timer ──
   useEffect(() => {
     const tick = () => {
       if (Date.now() >= WEDDING_MOMENT && !isMarried && phase === "live") {
         setIsMarried(true);
       }
-      setTime(getTimeDiff(WEDDING_MOMENT));
+      setTimeSince(getTimeSince());
     };
 
     tick();
@@ -137,54 +177,54 @@ export default function WeddingCountdown() {
     return () => clearInterval(id);
   }, [phase, isMarried]);
 
-  // ── Live-phase entrance animations ──
+  // ── Rotate formats every 5s ──
+  useEffect(() => {
+    if (phase !== "live" || !isMarried) return;
+
+    const id = setInterval(() => {
+      setFormatIndex((prev) => (prev + 1) % formats.length);
+    }, FORMAT_INTERVAL);
+
+    return () => clearInterval(id);
+  }, [phase, isMarried, formats.length]);
+
+  // ── Crossfade on format change ──
+  const prevFormatIndex = useRef(formatIndex);
+  useEffect(() => {
+    if (phase !== "live" || !isMarried) return;
+    if (prevFormatIndex.current === formatIndex) return;
+    prevFormatIndex.current = formatIndex;
+
+    const lines = formatLineRefs.current.filter(Boolean);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        lines,
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.06 }
+      );
+    });
+
+    return () => ctx.revert();
+  }, [formatIndex, phase, isMarried]);
+
+  // ── Live entrance ──
   useEffect(() => {
     if (phase !== "live") return;
 
     const ctx = gsap.context(() => {
-      const boxes = boxesRef.current.filter(Boolean);
-
-      gsap.set(boxes, { opacity: 0, scale: 0, y: 50, filter: "blur(10px)" });
-
-      gsap.to(boxes, {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 0.8,
-        ease: "back.out(1.7)",
-        stagger: 0.2,
-        delay: 0.3,
-      });
-
-      // Gentle pulse on seconds box
-      const secBox = boxesRef.current[3];
-      if (secBox) {
-        gsap.fromTo(secBox, { scale: 1 }, {
-          scale: 1.04,
-          duration: 0.5,
-          ease: "power2.inOut",
-          repeat: -1,
-          yoyo: true,
-          delay: 1.5,
-        });
-      }
-
-      // Married label entrance — slow, cinematic
       if (isMarried && marriedTextRef.current) {
         gsap.fromTo(
           marriedTextRef.current,
           { opacity: 0, y: 16, filter: "blur(6px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease: "power2.out", delay: 0.5 }
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease: "power2.out", delay: 0.3 }
         );
       }
 
-      // "Since" label entrance
-      if (isMarried && sinceTextRef.current) {
+      if (isMarried && sinceAreaRef.current) {
         gsap.fromTo(
-          sinceTextRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 1, ease: "power2.out", delay: 1.0 }
+          sinceAreaRef.current,
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 0.7 }
         );
       }
     });
@@ -203,12 +243,7 @@ export default function WeddingCountdown() {
     []
   );
 
-  const timeItems = [
-    { value: time.days, label: "DAYS" },
-    { value: time.hours, label: "HOURS" },
-    { value: time.minutes, label: "MINUTES" },
-    { value: time.seconds, label: "SECONDS" },
-  ];
+  const activeFormat = formats[formatIndex];
 
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-4 py-8">
@@ -224,7 +259,7 @@ export default function WeddingCountdown() {
       />
       {memoizedFireworks}
 
-      {/* ── Flash overlay — soft warm white, not yellow ── */}
+      {/* ── Flash overlay ── */}
       <div
         ref={flashRef}
         className="fixed inset-0 z-[60] pointer-events-none opacity-0"
@@ -234,7 +269,7 @@ export default function WeddingCountdown() {
         }}
       />
 
-      {/* ── Finale overlay: cinematic last-second countdown ── */}
+      {/* ── Finale overlay ── */}
       {(phase === "finale" || phase === "flash") && (
         <div
           ref={finaleOverlayRef}
@@ -281,7 +316,7 @@ export default function WeddingCountdown() {
         </div>
       )}
 
-      {/* ── Main content ── */}
+      {/* ── Main content — always rendered, no conditional mount ── */}
       <div className="flex flex-col items-center gap-4 sm:gap-6 z-10 w-full max-w-4xl">
         {/* Date header */}
         <div className="flex flex-col items-center gap-2 relative">
@@ -325,46 +360,53 @@ export default function WeddingCountdown() {
           </h1>
         </div>
 
-        {/* Happily Married — simple, elegant, on-palette */}
-        {isMarried && (
-          <div ref={marriedTextRef} style={{ opacity: 0 }}>
-            <span className="text-xl sm:text-2xl md:text-3xl font-serif italic tracking-wide text-[#ffbcab]">
-              Happily Married
-            </span>
-          </div>
-        )}
+        {/* Happily Married */}
+        <div
+          ref={marriedTextRef}
+          className="h-8 sm:h-10"
+          style={{ opacity: isMarried ? 0 : 0, visibility: isMarried ? "visible" : "hidden" }}
+        >
+          <span className="text-xl sm:text-2xl md:text-3xl font-serif italic tracking-wide text-[#ffbcab]">
+            Happily Married
+          </span>
+        </div>
 
-        {/* Counter */}
-        {phase === "live" && (
-          <div className="flex flex-col items-center gap-3">
-            {isMarried && (
-              <div ref={sinceTextRef} style={{ opacity: 0 }}>
-                <span className="text-[#ffbcab]/40 text-xs sm:text-sm font-mono tracking-[0.15em]">
-                  since 9 PM · October 22, 2025
+        {/* ── Time since — flowing text, not boxes ── */}
+        <div
+          ref={sinceAreaRef}
+          className="flex flex-col items-center gap-4 min-h-[80px]"
+          style={{ opacity: isMarried ? 0 : 0, visibility: isMarried ? "visible" : "hidden" }}
+        >
+          {/* Rotating format display */}
+          <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-center">
+            {activeFormat.parts.map((part, i) => (
+              <div
+                key={`${formatIndex}-${i}`}
+                ref={(el) => {
+                  formatLineRefs.current[i] = el;
+                }}
+                className="flex items-baseline gap-1 sm:gap-1.5"
+              >
+                {i > 0 && (
+                  <span className="text-[#ffbcab]/20 text-lg sm:text-xl font-serif mr-1 sm:mr-2">
+                    ·
+                  </span>
+                )}
+                <span className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#ffbcab] tabular-nums leading-none">
+                  {part.value}
+                </span>
+                <span className="text-xs sm:text-sm font-mono text-[#ffbcab]/40 tracking-wider">
+                  {part.label}
                 </span>
               </div>
-            )}
-
-            <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center">
-              {timeItems.map((item, index) => (
-                <div
-                  key={index}
-                  ref={(el) => {
-                    boxesRef.current[index] = el;
-                  }}
-                  className="flex flex-col items-center justify-center flex-1 sm:w-24 h-16 sm:h-24 px-1 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
-                >
-                  <span className="text-2xl sm:text-4xl font-serif leading-none tabular-nums">
-                    {item.value.toString().padStart(2, "0")}
-                  </span>
-                  <span className="text-xs font-mono font-normal tracking-wider mt-1">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
-        )}
+
+          {/* Static since line */}
+          <span className="text-[#ffbcab]/30 text-[10px] sm:text-xs font-mono tracking-[0.2em] uppercase">
+            since 9 PM · October 22, 2025
+          </span>
+        </div>
       </div>
 
       {/* Wedding Information Drawer */}
