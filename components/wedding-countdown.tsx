@@ -72,50 +72,50 @@ export default function WeddingCountdown() {
         if (secBox) {
           tl.fromTo(
             secBox,
-            { scale: value === 0 ? 1.3 : 1.2 },
+            { scale: value === 0 ? 1.3 : 1.15 },
             { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.5)" },
             at
           );
         }
       });
 
-      // Golden glow on all boxes at zero
+      // Soft warm glow at zero — stays in palette
       tl.to(
         boxes,
         {
-          borderColor: "rgba(255, 215, 0, 0.8)",
-          boxShadow: "0 0 40px rgba(255, 215, 0, 0.5)",
-          color: "#ffd700",
-          duration: 0.4,
+          borderColor: "rgba(255, 188, 171, 0.6)",
+          boxShadow: "0 0 30px rgba(255, 188, 171, 0.2)",
+          duration: 0.5,
+          ease: "power2.out",
         },
         3.0
       );
 
       // Transition to flash
-      tl.call(() => setPhase("flash"), [], 3.5);
+      tl.call(() => setPhase("flash"), [], 3.6);
     });
 
     return () => ctx.revert();
   }, [phase]);
 
-  // ── Flash: golden burst + reveal married state ──
+  // ── Flash: warm burst + reveal married state ──
   useEffect(() => {
     if (phase !== "flash") return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
-      tl.to(flashRef.current, { opacity: 1, duration: 0.4, ease: "power2.in" })
-        .call(() => setIsMarried(true), [], 0.5)
+      tl.to(flashRef.current, { opacity: 1, duration: 0.3, ease: "power2.in" })
+        .call(() => setIsMarried(true), [], 0.4)
         .to(
           finaleOverlayRef.current,
-          { opacity: 0, duration: 0.6, ease: "power2.out" },
-          0.6
+          { opacity: 0, duration: 0.8, ease: "power2.out" },
+          0.5
         )
         .to(
           flashRef.current,
-          { opacity: 0, duration: 1.2, ease: "power2.out" },
-          0.8
+          { opacity: 0, duration: 1.4, ease: "power3.out" },
+          0.7
         )
         .call(() => setPhase("live"), [], 1.8);
     });
@@ -157,11 +157,11 @@ export default function WeddingCountdown() {
         delay: 0.3,
       });
 
-      // Heartbeat on seconds box
+      // Gentle pulse on seconds box
       const secBox = boxesRef.current[3];
       if (secBox) {
         gsap.fromTo(secBox, { scale: 1 }, {
-          scale: 1.05,
+          scale: 1.04,
           duration: 0.5,
           ease: "power2.inOut",
           repeat: -1,
@@ -170,12 +170,12 @@ export default function WeddingCountdown() {
         });
       }
 
-      // Married label entrance
+      // Married label entrance — slow, cinematic
       if (isMarried && marriedTextRef.current) {
         gsap.fromTo(
           marriedTextRef.current,
-          { opacity: 0, y: 20, filter: "blur(8px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, ease: "power2.out", delay: 0.6 }
+          { opacity: 0, y: 16, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease: "power2.out", delay: 0.5 }
         );
       }
 
@@ -184,27 +184,8 @@ export default function WeddingCountdown() {
         gsap.fromTo(
           sinceTextRef.current,
           { opacity: 0 },
-          { opacity: 1, duration: 0.8, ease: "power2.out", delay: 1.0 }
+          { opacity: 1, duration: 1, ease: "power2.out", delay: 1.0 }
         );
-      }
-
-      // Golden glow pulse on married counter boxes
-      if (isMarried) {
-        boxes.forEach((box, i) => {
-          if (!box) return;
-          gsap.fromTo(
-            box,
-            { boxShadow: "0 0 8px rgba(255, 215, 0, 0.05)" },
-            {
-              boxShadow: "0 0 20px rgba(255, 215, 0, 0.15)",
-              duration: 2,
-              ease: "sine.inOut",
-              repeat: -1,
-              yoyo: true,
-              delay: 1.5 + i * 0.2,
-            }
-          );
-        });
       }
     });
 
@@ -243,13 +224,13 @@ export default function WeddingCountdown() {
       />
       {memoizedFireworks}
 
-      {/* ── Golden flash overlay ── */}
+      {/* ── Flash overlay — soft warm white, not yellow ── */}
       <div
         ref={flashRef}
         className="fixed inset-0 z-[60] pointer-events-none opacity-0"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,223,100,0.95) 0%, rgba(255,180,100,0.6) 50%, transparent 100%)",
+            "radial-gradient(ellipse at center, rgba(255,240,235,0.9) 0%, rgba(216,117,88,0.4) 60%, transparent 100%)",
         }}
       />
 
@@ -269,7 +250,7 @@ export default function WeddingCountdown() {
           />
 
           <div className="flex flex-col items-center gap-8 z-10">
-            <h2 className="text-[#ffbcab]/50 text-xs sm:text-sm font-mono tracking-[0.3em] uppercase">
+            <h2 className="text-[#ffbcab]/40 text-xs sm:text-sm font-mono tracking-[0.3em] uppercase">
               The countdown ends
             </h2>
 
@@ -290,7 +271,7 @@ export default function WeddingCountdown() {
                   <span className="text-3xl sm:text-5xl font-serif leading-none">
                     {item.value.toString().padStart(2, "0")}
                   </span>
-                  <span className="text-[10px] sm:text-xs font-mono tracking-wider mt-2 opacity-50">
+                  <span className="text-[10px] sm:text-xs font-mono tracking-wider mt-2 opacity-40">
                     {item.label}
                   </span>
                 </div>
@@ -344,22 +325,10 @@ export default function WeddingCountdown() {
           </h1>
         </div>
 
-        {/* Happily Married label with golden shimmer */}
+        {/* Happily Married — simple, elegant, on-palette */}
         {isMarried && (
           <div ref={marriedTextRef} style={{ opacity: 0 }}>
-            <span
-              className="text-xl sm:text-2xl md:text-3xl font-serif italic tracking-wide inline-block animate-shiny-text bg-clip-text"
-              style={
-                {
-                  "--shiny-width": "100px",
-                  backgroundImage:
-                    "linear-gradient(120deg, #ffbcab 40%, #ffd700 50%, #ffbcab 60%)",
-                  backgroundSize: "250% 100%",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                } as React.CSSProperties
-              }
-            >
+            <span className="text-xl sm:text-2xl md:text-3xl font-serif italic tracking-wide text-[#ffbcab]">
               Happily Married
             </span>
           </div>
@@ -370,7 +339,7 @@ export default function WeddingCountdown() {
           <div className="flex flex-col items-center gap-3">
             {isMarried && (
               <div ref={sinceTextRef} style={{ opacity: 0 }}>
-                <span className="text-[#ffbcab]/50 text-xs sm:text-sm font-mono tracking-[0.15em]">
+                <span className="text-[#ffbcab]/40 text-xs sm:text-sm font-mono tracking-[0.15em]">
                   since 9 PM · October 22, 2025
                 </span>
               </div>
@@ -383,11 +352,7 @@ export default function WeddingCountdown() {
                   ref={(el) => {
                     boxesRef.current[index] = el;
                   }}
-                  className={`flex flex-col items-center justify-center flex-1 sm:w-24 h-16 sm:h-24 px-1 sm:px-4 py-2 sm:py-3 border text-[#ffbcab] min-w-0 ${
-                    isMarried
-                      ? "border-[#ffd700]/20"
-                      : "border-[#ffbcab]/30"
-                  }`}
+                  className="flex flex-col items-center justify-center flex-1 sm:w-24 h-16 sm:h-24 px-1 sm:px-4 py-2 sm:py-3 border border-[#ffbcab]/30 text-[#ffbcab] min-w-0"
                 >
                   <span className="text-2xl sm:text-4xl font-serif leading-none tabular-nums">
                     {item.value.toString().padStart(2, "0")}
