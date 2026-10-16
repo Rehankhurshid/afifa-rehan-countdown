@@ -42,6 +42,19 @@
       .fr-title { font-size: clamp(40px, 12vw, 64px); line-height: 1.02; color: #c91b21; font-weight: 400; margin: 0; }
       .fr-line { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 300; font-size: clamp(22px, 6vw, 26px); line-height: 1.35; color: #ffbcab; margin: 0; max-width: 22ch; }
       .fr-lock[data-state="opening"] .fr-when-sealed, .fr-lock[data-state="sealed"] .fr-when-opening { display: none; }
+
+      .fr-cam { display: none; flex-direction: column; align-items: center; gap: 18px; }
+      .fr-lock[data-state="sealed"] .fr-cam { display: flex; }
+      .fr-lock[data-state="scanning"] .fr-cam { display: flex; }
+      .fr-lock[data-state="scanning"] .fr-line { display: none; }
+      .fr-lock[data-state="scanning"] .fr-seal { display: none; }
+      .fr-lock[data-state="scanning"] .fr-when-opening { display: none; }
+      .fr-btn { min-height: var(--tap); padding: 12px 26px; border-radius: 999px; border: 1px solid rgba(255,188,171,.6); background: #c91b21; color: #fff; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; }
+      .fr-btn[hidden] { display: none; }
+      .fr-view { width: 220px; height: 220px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(255,188,171,.7); display: none; background: rgba(0,0,0,.15); }
+      .fr-lock[data-state="scanning"] .fr-view { display: block; }
+      .fr-view video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+      .fr-msg { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: 20px; color: #ffbcab; min-height: 1.4em; max-width: 24ch; }
       @media (prefers-reduced-motion: reduce) { .fr-seal .fr-ticks { animation: none; } }
     </style>
   </head>
@@ -57,7 +70,12 @@
       <p class="fr-label fr-when-opening">Opening…</p>
       <p class="fr-label fr-when-sealed">Sealed with love</p>
       <h1 class="fr-title fr-when-sealed">A private letter</h1>
-      <p class="fr-line fr-when-sealed">This one opens only with the link it was sent with.</p>
+      <p class="fr-line fr-when-sealed">This one opens only for Rehan.</p>
+      <div class="fr-cam">
+        <div class="fr-view"><video id="fr-video" playsinline muted autoplay></video></div>
+        <p class="fr-msg" id="fr-msg" aria-live="polite"></p>
+        <button class="fr-btn" id="fr-scan" type="button">Show me your face</button>
+      </div>
     </div>
     <div id="fr-root"></div>
     <script>
@@ -69,8 +87,57 @@
         function sealed() { lock.setAttribute("data-state", "sealed"); }
 
         var m = /(?:^#|&)k=([A-Za-z0-9_-]{43})/.exec(location.hash || "");
-        if (!m || !window.crypto || !crypto.subtle) return sealed();
-        var keyB64 = m[1];
+        if (!window.crypto || !crypto.subtle) return sealed();
+        if (!m) { sealed(); return faceGate(start); }
+        start(m[1]);
+
+        function faceGate(done) {
+          var btn = document.getElementById("fr-scan"), msg = document.getElementById("fr-msg"), video = document.getElementById("fr-video");
+          var F = "/for-rehan/face/", O = "YzgxAR9XVgQGIQQAenYZJD8mIQBAOTsHPScGXxgsNwswRkc4Fx4wHmUGag==", P = "ROSES22";
+          var stream = null, timer = null, busy = false;
+          function say(t) { msg.textContent = t; }
+          function stop() { if (timer) clearInterval(timer); timer = null; if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+          function loadScript(src) { return new Promise(function (ok, no) { if (window.faceapi) return ok(); var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }); }
+          var ready = null;
+          function prep() {
+            if (ready) return ready;
+            ready = loadScript(F + "face-api.js").then(function () {
+              var fa = window.faceapi;
+              return Promise.all([fa.nets.tinyFaceDetector.loadFromUri(F), fa.nets.faceLandmark68Net.loadFromUri(F), fa.nets.faceRecognitionNet.loadFromUri(F), fetch(F + "ref.json").then(function (r) { return r.json(); })]);
+            }).then(function (x) { return x[3].map(function (d) { return new Float32Array(d); }); });
+            ready.catch(function () { ready = null; });
+            return ready;
+          }
+          function unwrap() { var b = atob(O), k = ""; for (var i = 0; i < b.length; i++) k += String.fromCharCode(b.charCodeAt(i) ^ P.charCodeAt(i % P.length)); return k; }
+          btn.addEventListener("click", function () {
+            btn.hidden = true; lock.setAttribute("data-state", "scanning"); say("Waking the camera…");
+            var camP = navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } }, audio: false }) : Promise.reject(new Error("nocam"));
+            camP.then(function (s) { stream = s; video.srcObject = s; return video.play().catch(function () {}); }).then(function () {
+              say("Getting a good look…");
+              return prep();
+            }).then(function (refs) {
+              var fa = window.faceapi, hits = 0, tries = 0, opts = new fa.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.45 });
+              say("Look straight at me.");
+              timer = setInterval(function () {
+                if (busy) return; busy = true; tries++;
+                fa.detectSingleFace(video, opts).withFaceLandmarks().withFaceDescriptor().then(function (r) {
+                  busy = false;
+                  if (!timer) return;
+                  if (!r) { if (tries > 6) say("Come a little closer, in good light."); return; }
+                  var best = Math.min.apply(null, refs.map(function (d) { return fa.euclideanDistance(d, r.descriptor); }));
+                  if (best < 0.55) { hits++; if (hits >= 2) { stop(); say("There you are."); var k = unwrap(); history.replaceState(null, "", location.pathname + "#k=" + k); lock.setAttribute("data-state", "opening"); setTimeout(function () { done(k); }, 600); return; } }
+                  else { hits = 0; if (tries > 10) say("Hmm, you don’t look like Rehan."); }
+                  if (tries > 45) { stop(); lock.setAttribute("data-state", "sealed"); say("Not this time. Try again in better light?"); btn.hidden = false; }
+                }).catch(function () { busy = false; });
+              }, 350);
+            }).catch(function () {
+              stop(); lock.setAttribute("data-state", "sealed"); btn.hidden = false;
+              say("I need the camera to see who’s reading. Allow it and tap again.");
+            });
+          });
+        }
+
+        function start(keyB64) {
 
         function b64u(s) {
           s = s.replace(/-/g, "+").replace(/_/g, "/");
@@ -140,6 +207,7 @@
             }, 4000);
           });
         }).catch(function () { sealed(); });
+        }
       })();
     </script>
   </body>

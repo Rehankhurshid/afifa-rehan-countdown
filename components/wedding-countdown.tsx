@@ -407,6 +407,22 @@ export default function WeddingCountdown() {
             since 9 PM · October 22, 2025
           </span>
         </div>
+        {/* Quiet links: wishes and the letter */}
+        <nav className="flex items-center gap-3 sm:gap-5 mt-2 sm:mt-4" aria-label="More">
+          <a
+            href="/wishes"
+            className="text-[#ffbcab]/70 hover:text-[#ffbcab] text-[11px] sm:text-xs font-mono tracking-[0.2em] uppercase border-b border-[#ffbcab]/30 hover:border-[#ffbcab] pb-0.5 transition-colors"
+          >
+            Leave a wish
+          </a>
+          <span className="text-[#ffbcab]/30" aria-hidden="true">·</span>
+          <a
+            href="/for-rehan"
+            className="text-[#ffbcab]/70 hover:text-[#ffbcab] text-[11px] sm:text-xs font-mono tracking-[0.2em] uppercase border-b border-[#ffbcab]/30 hover:border-[#ffbcab] pb-0.5 transition-colors"
+          >
+            A letter for Rehan
+          </a>
+        </nav>
       </div>
 
       {/* Wedding Information Drawer */}
