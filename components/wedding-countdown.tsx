@@ -82,6 +82,22 @@ export default function WeddingCountdown() {
   // Pre-compute formats
   const formats = useMemo(() => getFormats(timeSince), [timeSince]);
 
+  // Safety net: never let the intro overlay trap the page (slow phones,
+  // background tabs where animations pause, in-app browsers).
+  useEffect(() => {
+    if (phase === "live") return;
+    const t = setTimeout(() => {
+      setIsMarried(true);
+      setPhase("live");
+    }, phase === "finale" ? 6000 : 2500);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  const skipIntro = useCallback(() => {
+    setIsMarried(true);
+    setPhase("live");
+  }, []);
+
   // ── Finale: cinematic last-second countdown ──
   useEffect(() => {
     if (phase !== "finale") return;
@@ -273,7 +289,10 @@ export default function WeddingCountdown() {
       {(phase === "finale" || phase === "flash") && (
         <div
           ref={finaleOverlayRef}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#d87558]"
+          onClick={skipIntro}
+          className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#d87558] cursor-pointer ${
+            phase === "flash" ? "pointer-events-none" : ""
+          }`}
         >
           <div
             className="absolute inset-0 opacity-50"

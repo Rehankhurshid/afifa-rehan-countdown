@@ -26,7 +26,7 @@ function parseGviz(text: string): Wish[] {
         time,
       };
     })
-    .filter((w) => w.name && w.wish)
+    .filter((w) => w.name && w.wish && !(w.name === "Name" && w.wish === "Wish"))
     .sort((a, b) => b.time - a.time);
 }
 
@@ -53,7 +53,7 @@ export default function WeddingWishes() {
     const n = name.trim();
     const w = wish.trim();
     if (!n || !w) return setNote("Please add your name and a wish.");
-    if (trap || Date.now() - opened.current < 3000) {
+    if (trap.trim().length > 3 || Date.now() - opened.current < 1500) {
       setStatus("sent");
       return;
     }
@@ -126,10 +126,12 @@ export default function WeddingWishes() {
             tabIndex={-1}
             autoComplete="off"
             aria-hidden="true"
+            data-lpignore="true"
+            data-1p-ignore="true"
             value={trap}
             onChange={(e) => setTrap(e.target.value)}
             className="absolute -left-[9999px] h-0 w-0 opacity-0"
-            name="website"
+            name="hp_extra_field"
           />
           <button
             type="submit"
