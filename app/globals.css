@@ -130,3 +130,9 @@
     @apply bg-background text-foreground;
   }
 }
+/* Wishes: names float in one by one */
+@keyframes wish-chip-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+.wish-chip { opacity: 0; animation: wish-chip-in 0.6s cubic-bezier(.2,.9,.3,1.2) forwards; }

@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import NumberFlow from "@number-flow/react";
 import { WISHES } from "@/config/wishes";
+
+// Wishes stay sealed until our anniversary: 22 Oct 2026, 00:00 IST.
+const REVEAL_AT = Date.UTC(2026, 9, 21, 18, 30);
 
 type Wish = { name: string; wish: string; time: number };
 
@@ -39,6 +43,20 @@ export default function WeddingWishes() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [note, setNote] = useState("");
   const opened = useRef(Date.now());
+  const [now, setNow] = useState<number | null>(null);
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(t);
+  }, []);
+  const revealed = now !== null && now >= REVEAL_AT;
+  const writers = Array.from(new Set(wishes.map((w) => w.name.trim()))).filter(Boolean);
+  useEffect(() => {
+    if (loading) return;
+    const t = setTimeout(() => setShown(wishes.length), 250);
+    return () => clearTimeout(t);
+  }, [loading, wishes.length]);
 
   useEffect(() => {
     fetch(SHEET_URL)
@@ -148,37 +166,85 @@ export default function WeddingWishes() {
             {status === "sending" ? "Sending…" : "Send your wish"}
           </button>
           {status === "sent" && (
-            <p className="text-center font-serif italic text-lg text-[#c91b21]">Thank you, it means the world. ♥</p>
+            <p className="text-center font-serif italic text-lg text-[#c91b21]">{revealed ? "Thank you, it means the world. ♥" : "Thank you! We\u2019ll open it on our anniversary. ♥"}</p>
           )}
           {note && <p className="text-center font-mono text-xs text-[#8a3a2c]">{note}</p>}
         </form>
 
         <section className="mt-16">
-          <div className="flex items-center justify-center gap-4">
-            <span className="h-px w-10 bg-[#4a1610]/40" />
-            <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">
-              {loading ? "Gathering wishes…" : `${wishes.length} ${wishes.length === 1 ? "wish" : "wishes"}`}
-            </p>
-            <span className="h-px w-10 bg-[#4a1610]/40" />
-          </div>
-          {!loading && wishes.length === 0 && (
-            <p className="mt-6 text-center font-serif italic text-xl text-[#4a1610]">
-              Be the first to leave a wish.
-            </p>
-          )}
-          <div className="mt-8 columns-1 sm:columns-2 gap-5">
-            {wishes.map((w, i) => (
-              <div
-                key={`${w.time}-${i}`}
-                className={`mb-5 break-inside-avoid rounded-lg bg-[#fbf1e6] px-6 pt-6 pb-5 shadow-[0_8px_24px_-12px_rgba(90,25,15,0.5)] ${tilts[i % tilts.length]}`}
-              >
-                <p className="font-serif text-[1.2rem] leading-relaxed text-[#3b1612] whitespace-pre-line break-words">
-                  {w.wish}
-                </p>
-                <p className="mt-4 text-right font-serif italic text-lg text-[#c91b21]">{w.name}</p>
+          {!revealed ? (
+            <div className="text-center">
+              <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">Sealed until October 22</p>
+              <div className="mt-4 flex items-baseline justify-center gap-3 text-[#fbf1e6]">
+                <NumberFlow
+                  value={shown}
+                  className="font-serif text-8xl sm:text-9xl leading-none tabular-nums"
+                  transformTiming={{ duration: 900, easing: "cubic-bezier(.2,.9,.3,1.2)" }}
+                />
               </div>
-            ))}
-          </div>
+              <p className="mt-2 font-serif italic text-2xl text-[#4a1610]">
+                {loading
+                  ? "gathering the love…"
+                  : wishes.length === 0
+                  ? "Be the first to leave a wish."
+                  : `${wishes.length === 1 ? "wish is" : "wishes are"} waiting for us`}
+              </p>
+              {writers.length > 0 && (
+                <div className="mx-auto mt-8 max-w-xl">
+                  <p className="text-[#4a1610]/80 text-xs font-mono tracking-[0.25em] uppercase">With love from</p>
+                  <div className="mt-4 flex flex-wrap justify-center gap-2.5">
+                    {writers.map((n, i) => (
+                      <span
+                        key={n + i}
+                        className="wish-chip inline-flex items-center gap-2 rounded-full bg-[#fbf1e6] pl-1.5 pr-4 py-1.5 shadow-[0_6px_16px_-10px_rgba(90,25,15,0.6)]"
+                        style={{ animationDelay: `${300 + i * 90}ms` }}
+                      >
+                        <span className="grid h-7 w-7 place-items-center rounded-full bg-[#c91b21] font-serif text-base text-[#fbf1e6]">
+                          {n.charAt(0).toUpperCase()}
+                        </span>
+                        <span className="font-serif text-lg text-[#3b1612]">{n}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <p className="mt-10 font-serif italic text-lg text-[#4a1610]">
+                Every wish opens on our anniversary. ♥
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-center gap-4">
+                <span className="h-px w-10 bg-[#4a1610]/40" />
+                <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">
+                  {loading ? "Gathering wishes…" : (
+                    <>
+                      <NumberFlow value={shown} /> {wishes.length === 1 ? "wish" : "wishes"}
+                    </>
+                  )}
+                </p>
+                <span className="h-px w-10 bg-[#4a1610]/40" />
+              </div>
+              {!loading && wishes.length === 0 && (
+                <p className="mt-6 text-center font-serif italic text-xl text-[#4a1610]">
+                  Be the first to leave a wish.
+                </p>
+              )}
+              <div className="mt-8 columns-1 sm:columns-2 gap-5">
+                {wishes.map((w, i) => (
+                  <div
+                    key={`${w.time}-${i}`}
+                    className={`mb-5 break-inside-avoid rounded-lg bg-[#fbf1e6] px-6 pt-6 pb-5 shadow-[0_8px_24px_-12px_rgba(90,25,15,0.5)] ${tilts[i % tilts.length]}`}
+                  >
+                    <p className="font-serif text-[1.2rem] leading-relaxed text-[#3b1612] whitespace-pre-line break-words">
+                      {w.wish}
+                    </p>
+                    <p className="mt-4 text-right font-serif italic text-lg text-[#c91b21]">{w.name}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </section>
       </div>
     </main>
