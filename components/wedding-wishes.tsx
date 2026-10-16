@@ -108,13 +108,13 @@ export default function WeddingWishes() {
         }}
       />
       <div className="relative z-10 mx-auto max-w-3xl px-5 py-14 sm:py-20">
-        <p className="text-center text-[#4a1610] text-xs sm:text-sm font-mono tracking-[0.3em] uppercase">
+        <p className="text-center text-[#3b1612] text-sm font-mono tracking-[0.25em] uppercase">
           Afifa &amp; Rehan
         </p>
         <h1 className="mt-3 text-center text-[#fbf1e6] text-5xl sm:text-7xl font-serif leading-tight drop-shadow-[0_1px_0_rgba(120,30,20,0.25)]">
           Wedding Wishes
         </h1>
-        <p className="mt-3 text-center font-serif italic text-xl sm:text-2xl text-[#4a1610]">
+        <p className="mt-3 text-center font-serif italic text-xl sm:text-2xl text-[#3b1612]">
           Leave a little love for the two of us.
         </p>
 
@@ -174,7 +174,7 @@ export default function WeddingWishes() {
         <section className="mt-16">
           {!revealed ? (
             <div className="text-center">
-              <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">Sealed until October 22</p>
+              <p className="text-[#3b1612] text-sm font-mono tracking-[0.25em] uppercase">Sealed until October 22</p>
               <div className="mt-4 flex items-baseline justify-center gap-3 text-[#fbf1e6]">
                 <NumberFlow
                   value={shown}
@@ -182,7 +182,7 @@ export default function WeddingWishes() {
                   transformTiming={{ duration: 900, easing: "cubic-bezier(.2,.9,.3,1.2)" }}
                 />
               </div>
-              <p className="mt-2 font-serif italic text-2xl text-[#4a1610]">
+              <p className="mt-2 font-serif italic text-2xl text-[#3b1612]">
                 {loading
                   ? "gathering the love…"
                   : wishes.length === 0
@@ -191,7 +191,7 @@ export default function WeddingWishes() {
               </p>
               {writers.length > 0 && (
                 <div className="mx-auto mt-8 max-w-xl">
-                  <p className="text-[#4a1610]/80 text-xs font-mono tracking-[0.25em] uppercase">With love from</p>
+                  <p className="text-[#3b1612] text-sm font-mono tracking-[0.2em] uppercase">With love from</p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2.5">
                     {writers.map((n, i) => (
                       <span
@@ -208,7 +208,7 @@ export default function WeddingWishes() {
                   </div>
                 </div>
               )}
-              <p className="mt-10 font-serif italic text-lg text-[#4a1610]">
+              <p className="mt-10 font-serif italic text-lg text-[#3b1612]">
                 Every wish opens on our anniversary. ♥
               </p>
             </div>
@@ -216,7 +216,7 @@ export default function WeddingWishes() {
             <>
               <div className="flex items-center justify-center gap-4">
                 <span className="h-px w-10 bg-[#4a1610]/40" />
-                <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">
+                <p className="text-[#3b1612] text-sm font-mono tracking-[0.25em] uppercase">
                   {loading ? "Gathering wishes…" : (
                     <>
                       <NumberFlow value={shown} /> {wishes.length === 1 ? "wish" : "wishes"}
@@ -226,7 +226,7 @@ export default function WeddingWishes() {
                 <span className="h-px w-10 bg-[#4a1610]/40" />
               </div>
               {!loading && wishes.length === 0 && (
-                <p className="mt-6 text-center font-serif italic text-xl text-[#4a1610]">
+                <p className="mt-6 text-center font-serif italic text-xl text-[#3b1612]">
                   Be the first to leave a wish.
                 </p>
               )}
