@@ -74,29 +74,36 @@ export default function WeddingWishes() {
     }
   }
 
-  const label = "text-[10px] sm:text-xs font-mono tracking-[0.25em] uppercase text-[#ffbcab]/70";
+  const label = "text-[11px] font-mono tracking-[0.22em] uppercase text-[#8a3a2c]";
   const field =
-    "w-full bg-transparent border border-[#ffbcab]/30 px-4 py-3 text-[#fbf1e6] placeholder:text-[#ffbcab]/40 font-serif text-lg focus:outline-none focus:border-[#c91b21] transition-colors";
+    "w-full rounded-md bg-white/70 border border-[#c9a99a] px-4 py-3 text-[#3b1612] placeholder:text-[#a07c70] font-serif text-lg focus:outline-none focus:border-[#c91b21] focus:bg-white transition-colors";
+  const tilts = ["-rotate-[1.2deg]", "rotate-[0.8deg]", "-rotate-[0.4deg]", "rotate-[1.4deg]", "rotate-0", "-rotate-[1deg]"];
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden text-[#ffbcab]">
+    <main className="relative min-h-screen overflow-x-hidden">
       <div className="fixed inset-0 bg-[#d87558]" />
       <div
         className="fixed inset-0 opacity-50"
-        style={{ background: "url(/paperboard-texture\\ 1.png) lightgray 50% / cover no-repeat" }}
+        style={{
+          background: "url(/paperboard-texture\\ 1.png) lightgray 50% / cover no-repeat",
+          mixBlendMode: "multiply",
+        }}
       />
-      <div className="relative z-10 mx-auto max-w-2xl px-5 py-16 sm:py-24">
-        <p className="text-center text-[#ffbcab]/60 text-xs font-mono tracking-[0.3em] uppercase">
+      <div className="relative z-10 mx-auto max-w-3xl px-5 py-14 sm:py-20">
+        <p className="text-center text-[#fbf1e6]/80 text-xs font-mono tracking-[0.35em] uppercase">
           Afifa &amp; Rehan
         </p>
-        <h1 className="mt-4 text-center text-[#c91b21] text-5xl sm:text-7xl font-serif leading-tight">
+        <h1 className="mt-3 text-center text-[#fbf1e6] text-5xl sm:text-7xl font-serif leading-tight drop-shadow-[0_1px_0_rgba(120,30,20,0.25)]">
           Wedding Wishes
         </h1>
-        <p className="mt-4 text-center font-serif italic text-xl text-[#fbf1e6]/90">
+        <p className="mt-3 text-center font-serif italic text-xl text-[#fbf1e6]/90">
           Leave a little love for the two of us.
         </p>
 
-        <form onSubmit={submit} className="mt-12 border border-[#ffbcab]/30 p-5 sm:p-8 space-y-5">
+        <form
+          onSubmit={submit}
+          className="mx-auto mt-10 max-w-xl rounded-xl bg-[#fbf1e6] p-5 sm:p-8 space-y-5 shadow-[0_12px_40px_-12px_rgba(90,25,15,0.45)]"
+        >
           <label className="block">
             <span className={label}>Your name</span>
             <input
@@ -117,7 +124,7 @@ export default function WeddingWishes() {
               onChange={(e) => setWish(e.target.value)}
               placeholder="Write something sweet…"
             />
-            <span className="mt-1 block text-right text-[10px] font-mono text-[#ffbcab]/50">
+            <span className="mt-1 block text-right text-[11px] font-mono text-[#8a3a2c]/70">
               {wish.length}/{WISHES.maxWish}
             </span>
           </label>
@@ -136,33 +143,40 @@ export default function WeddingWishes() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full bg-[#c91b21] py-3 font-mono text-xs tracking-[0.3em] uppercase text-[#fbf1e6] hover:bg-[#a8161b] transition-colors disabled:opacity-60"
+            className="w-full rounded-md bg-[#c91b21] py-3.5 font-mono text-xs tracking-[0.3em] uppercase text-[#fbf1e6] hover:bg-[#a8161b] transition-colors disabled:opacity-60"
           >
             {status === "sending" ? "Sending…" : "Send your wish"}
           </button>
           {status === "sent" && (
-            <p className="text-center font-serif italic text-lg text-[#fbf1e6]">Thank you, it means the world. ♥</p>
+            <p className="text-center font-serif italic text-lg text-[#c91b21]">Thank you, it means the world. ♥</p>
           )}
-          {note && <p className="text-center font-mono text-xs text-[#fbf1e6]">{note}</p>}
+          {note && <p className="text-center font-mono text-xs text-[#8a3a2c]">{note}</p>}
         </form>
 
         <section className="mt-16">
-          <p className="text-center text-[#ffbcab]/60 text-xs font-mono tracking-[0.3em] uppercase">
-            {loading ? "Gathering wishes…" : `${wishes.length} ${wishes.length === 1 ? "wish" : "wishes"}`}
-          </p>
+          <div className="flex items-center justify-center gap-4">
+            <span className="h-px w-10 bg-[#fbf1e6]/50" />
+            <p className="text-[#fbf1e6] text-xs font-mono tracking-[0.3em] uppercase">
+              {loading ? "Gathering wishes…" : `${wishes.length} ${wishes.length === 1 ? "wish" : "wishes"}`}
+            </p>
+            <span className="h-px w-10 bg-[#fbf1e6]/50" />
+          </div>
           {!loading && wishes.length === 0 && (
-            <p className="mt-6 text-center font-serif italic text-xl text-[#fbf1e6]/80">
+            <p className="mt-6 text-center font-serif italic text-xl text-[#fbf1e6]">
               Be the first to leave a wish.
             </p>
           )}
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 columns-1 sm:columns-2 gap-5">
             {wishes.map((w, i) => (
-              <article key={`${w.time}-${i}`} className="border border-[#ffbcab]/30 p-5 bg-[#d87558]/30">
-                <p className="font-serif text-lg leading-relaxed text-[#fbf1e6] whitespace-pre-line break-words">
-                  “{w.wish}”
+              <div
+                key={`${w.time}-${i}`}
+                className={`mb-5 break-inside-avoid rounded-lg bg-[#fbf1e6] px-6 pt-6 pb-5 shadow-[0_8px_24px_-12px_rgba(90,25,15,0.5)] ${tilts[i % tilts.length]}`}
+              >
+                <p className="font-serif text-[1.2rem] leading-relaxed text-[#3b1612] whitespace-pre-line break-words">
+                  {w.wish}
                 </p>
-                <p className="mt-4 text-[#c91b21] font-serif text-xl">— {w.name}</p>
-              </article>
+                <p className="mt-4 text-right font-serif italic text-lg text-[#c91b21]">{w.name}</p>
+              </div>
             ))}
           </div>
         </section>
