@@ -74,9 +74,9 @@ export default function WeddingWishes() {
     }
   }
 
-  const label = "text-[11px] font-mono tracking-[0.22em] uppercase text-[#8a3a2c]";
+  const label = "text-xs font-mono tracking-[0.15em] uppercase text-[#6b2a20]";
   const field =
-    "w-full rounded-md bg-white/70 border border-[#c9a99a] px-4 py-3 text-[#3b1612] placeholder:text-[#a07c70] font-serif text-lg focus:outline-none focus:border-[#c91b21] focus:bg-white transition-colors";
+    "w-full rounded-md bg-white/70 border border-[#c9a99a] px-4 py-3 text-[#3b1612] placeholder:text-[#7d5a4f] font-serif text-lg focus:outline-none focus:border-[#c91b21] focus:bg-white transition-colors";
   const tilts = ["-rotate-[1.2deg]", "rotate-[0.8deg]", "-rotate-[0.4deg]", "rotate-[1.4deg]", "rotate-0", "-rotate-[1deg]"];
 
   return (
@@ -90,13 +90,13 @@ export default function WeddingWishes() {
         }}
       />
       <div className="relative z-10 mx-auto max-w-3xl px-5 py-14 sm:py-20">
-        <p className="text-center text-[#fbf1e6]/80 text-xs font-mono tracking-[0.35em] uppercase">
+        <p className="text-center text-[#4a1610] text-xs sm:text-sm font-mono tracking-[0.3em] uppercase">
           Afifa &amp; Rehan
         </p>
         <h1 className="mt-3 text-center text-[#fbf1e6] text-5xl sm:text-7xl font-serif leading-tight drop-shadow-[0_1px_0_rgba(120,30,20,0.25)]">
           Wedding Wishes
         </h1>
-        <p className="mt-3 text-center font-serif italic text-xl text-[#fbf1e6]/90">
+        <p className="mt-3 text-center font-serif italic text-xl sm:text-2xl text-[#4a1610]">
           Leave a little love for the two of us.
         </p>
 
@@ -124,7 +124,7 @@ export default function WeddingWishes() {
               onChange={(e) => setWish(e.target.value)}
               placeholder="Write something sweet…"
             />
-            <span className="mt-1 block text-right text-[11px] font-mono text-[#8a3a2c]/70">
+            <span className="mt-1 block text-right text-xs font-mono text-[#6b2a20]">
               {wish.length}/{WISHES.maxWish}
             </span>
           </label>
@@ -143,7 +143,7 @@ export default function WeddingWishes() {
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full rounded-md bg-[#c91b21] py-3.5 font-mono text-xs tracking-[0.3em] uppercase text-[#fbf1e6] hover:bg-[#a8161b] transition-colors disabled:opacity-60"
+            className="w-full rounded-md bg-[#c91b21] py-3.5 font-mono text-sm tracking-[0.2em] uppercase text-[#fbf1e6] hover:bg-[#a8161b] transition-colors disabled:opacity-60"
           >
             {status === "sending" ? "Sending…" : "Send your wish"}
           </button>
@@ -155,14 +155,14 @@ export default function WeddingWishes() {
 
         <section className="mt-16">
           <div className="flex items-center justify-center gap-4">
-            <span className="h-px w-10 bg-[#fbf1e6]/50" />
-            <p className="text-[#fbf1e6] text-xs font-mono tracking-[0.3em] uppercase">
+            <span className="h-px w-10 bg-[#4a1610]/40" />
+            <p className="text-[#4a1610] text-sm font-mono tracking-[0.25em] uppercase">
               {loading ? "Gathering wishes…" : `${wishes.length} ${wishes.length === 1 ? "wish" : "wishes"}`}
             </p>
-            <span className="h-px w-10 bg-[#fbf1e6]/50" />
+            <span className="h-px w-10 bg-[#4a1610]/40" />
           </div>
           {!loading && wishes.length === 0 && (
-            <p className="mt-6 text-center font-serif italic text-xl text-[#fbf1e6]">
+            <p className="mt-6 text-center font-serif italic text-xl text-[#4a1610]">
               Be the first to leave a wish.
             </p>
           )}
